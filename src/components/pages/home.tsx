@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect,useState } from 'react';
 import { isUserLoggedIn } from '@/lib/api/auth';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ModeToggle } from '@/components/mode-toggle';
 
 export const HomePage = () => {
   const navigate = useNavigate();
