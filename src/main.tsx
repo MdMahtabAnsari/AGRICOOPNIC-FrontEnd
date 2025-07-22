@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner"
 
 
 createRoot(document.getElementById('root')!).render(
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <div className='w-screen h-screen overflow-auto scrollbar-hide'>
       <App />
       </div>
