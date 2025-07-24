@@ -80,7 +80,7 @@ export const SignInForm = () => {
                                 />
 
                                 <Button type="submit" className="w-full mt-4 cursor-pointer" disabled={form.formState.isSubmitting||form.formState.isSubmitting}>
-                                    {form.formState.isSubmitting ? <Loader className="animate-spin h-4 w-4" /> : "Sign Up"}
+                                    {form.formState.isSubmitting ? <Loader className="animate-spin h-4 w-4" /> : "Sign In"}
                                     </Button>
                             </form>
                         </Form>
