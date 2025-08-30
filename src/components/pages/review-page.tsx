@@ -18,12 +18,11 @@ import { createDocumentAndCenter } from "@/lib/api/group/document-and-prefrence"
 import { Button } from "../ui/button";
 import { Loader } from "lucide-react";
 import { formSubmit } from "@/lib/api/formSubmit";
-import { createRazorpayPayment, getUserSuccessfulPayment, verifyRazorpayPayment } from "@/lib/api/payment";
+import { getUserSuccessfulPayment, createPhonePePayment } from "@/lib/api/payment";
 import { toast } from "sonner";
 import { deleteUser } from "@/lib/api/user";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getFormStatus } from "@/lib/api/formSubmit"
-import type { RazorpayResponse } from "@/providers/payment-provider";
 import { getFees } from "@/lib/api/fees";
 export function ReviewPage() {
     const basicInformation = useBasicInformationStore((state) => state.basicInformation);
@@ -118,7 +117,7 @@ export function ReviewPage() {
             return;
         }
         setLoading(true);
-        const paymentInfo = await createRazorpayPayment({
+        const paymentInfo = await createPhonePePayment({
             category: basicInformation.category.categoryType,
             name: basicInformation.user.name,
             email: basicInformation.user.email,
@@ -126,33 +125,13 @@ export function ReviewPage() {
         });
         if (paymentInfo.status !== "success") {
             toast.error(paymentInfo.message);
-        }
-        if (!window.Razorpay) {
-            toast.error("Payment service not loaded. Please refresh the page.");
             setLoading(false);
             return;
         }
-        const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
-        const paymentObj = new window.Razorpay({
-            key: key,
-            order_id: paymentInfo.data.order.id,
-            ...paymentInfo.data,
-            handler: async (response: RazorpayResponse) => {
-                console.log("Razorpay Payment response:", response);
-                const verifyResponse = await verifyRazorpayPayment({
-                    orderId: response.razorpay_order_id,
-                    paymentId: response.razorpay_payment_id,
-                    signature: response.razorpay_signature
-                });
-                if (verifyResponse.status === 'success') {
-                    toast.success("Payment successful");
-                    setIsPaymentSuccessful(true);
-                } else {
-                    toast.error(verifyResponse.message || "Failed to verify payment");
-                }
-            }
-        });
-        paymentObj.open();
+
+        const paymentLink = paymentInfo.data.checkoutPageUrl;
+        window.location.href = paymentLink;
+
         setLoading(false);
     }, [basicInformation]);
 
