@@ -18,12 +18,13 @@ import { createDocumentAndCenter } from "@/lib/api/group/document-and-prefrence"
 import { Button } from "../ui/button";
 import { Loader } from "lucide-react";
 import { formSubmit } from "@/lib/api/formSubmit";
-import { getUserSuccessfulPayment, createPhonePePayment } from "@/lib/api/payment";
+import { createRazorpayPayment, verifyRazorpayPayment, getUserSuccessfulPayment } from "@/lib/api/payment";
 import { toast } from "sonner";
 import { deleteUser } from "@/lib/api/user";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getFormStatus } from "@/lib/api/formSubmit"
 import { getFees } from "@/lib/api/fees";
+import type { RazorpayResponse } from "@/providers/payment-provider";
 export function ReviewPage() {
     const basicInformation = useBasicInformationStore((state) => state.basicInformation);
     const educationDetails10Th = useEducationDetailsStore10Th((state) => state.educationDetails);
@@ -117,7 +118,7 @@ export function ReviewPage() {
             return;
         }
         setLoading(true);
-        const paymentInfo = await createPhonePePayment({
+        const paymentInfo = await createRazorpayPayment({
             category: basicInformation.category.categoryType,
             name: basicInformation.user.name,
             email: basicInformation.user.email,
@@ -128,9 +129,38 @@ export function ReviewPage() {
             setLoading(false);
             return;
         }
+        if (!window.Razorpay) {
+            toast.error("Razorpay not loaded");
+            setLoading(false);
+            return;
+        }
 
-        const paymentLink = paymentInfo.data.checkoutPageUrl;
-        window.location.href = paymentLink;
+        if (!window.Razorpay) {
+            toast.error("Payment service not loaded. Please refresh the page.");
+            setLoading(false);
+            return;
+        }
+        const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
+        const paymentObj = new window.Razorpay({
+            key: key,
+            order_id: paymentInfo.data.order.id,
+            ...paymentInfo.data,
+            handler: async (response: RazorpayResponse) => {
+                console.log("Razorpay Payment response:", response);
+                const verifyResponse = await verifyRazorpayPayment({
+                    orderId: response.razorpay_order_id,
+                    paymentId: response.razorpay_payment_id,
+                    signature: response.razorpay_signature
+                });
+                if (verifyResponse.status === 'success') {
+                    toast.success("Payment successful");
+                    setIsPaymentSuccessful(true);
+                } else {
+                    toast.error(verifyResponse.message || "Failed to verify payment");
+                }
+            }
+        });
+        paymentObj.open();
 
         setLoading(false);
     }, [basicInformation]);
