@@ -36,6 +36,8 @@ import { useFormStepStore } from "@/store/form-step-store.ts";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { preferenceObj } from "@/lib/helpers/type-object";
+
 
 export function DocumentAndCenterForm() {
     const [loading, setLoading] = useState<boolean>(true);
@@ -52,7 +54,8 @@ export function DocumentAndCenterForm() {
             aadhaarFront: { documentType: 'AADHAAR_FRONT', url: undefined },
             aadhaarBack: { documentType: 'AADHAAR_BACK', url: undefined },
             preference1: { preferenceType: 'PREFERENCE_1', examCenterName: undefined },
-            preference2: { preferenceType: 'PREFERENCE_2', examCenterName: undefined }
+            preference2: { preferenceType: 'PREFERENCE_2', examCenterName: undefined },
+            preference3: { preferenceType: 'PREFERENCE_3', examCenterName: undefined}
         },
         mode: 'onChange',
     });
@@ -67,26 +70,10 @@ export function DocumentAndCenterForm() {
     const preference1Center = form.watch('preference1.examCenterName');
     const preference2Type = form.watch('preference2.preferenceType');
     const preference2Center = form.watch('preference2.examCenterName');
+    const preference3Type = form.watch('preference3.preferenceType');
+    const preference3Center = form.watch('preference3.examCenterName');
 
-    // Add debugging to see what's happening
-    useEffect(() => {
-        console.log('URL Values:', {
-            photoUrl,
-            signatureUrl,
-            aadhaarFrontUrl,
-            aadhaarBackUrl
-        });
-    }, [photoUrl, signatureUrl, aadhaarFrontUrl, aadhaarBackUrl]);
 
-    // Add this debugging useEffect right after your existing useEffects
-    useEffect(() => {
-        const subscription = form.watch((value, { name }) => {
-            console.log('🔍 Form field changed:', name, 'New form state:', value);
-        });
-        return () => subscription.unsubscribe();
-    }, [form]);
-
-    // Check if the form value is changed from stored value in documentAndCenter
 
     useEffect(() => {
         if (loading) {
@@ -100,21 +87,21 @@ export function DocumentAndCenterForm() {
             documentAndCenter.preference1.preferenceType !== preference1Type ||
             documentAndCenter.preference1.examCenterName !== preference1Center ||
             documentAndCenter.preference2.preferenceType !== preference2Type ||
-            documentAndCenter.preference2.examCenterName !== preference2Center
+            documentAndCenter.preference2.examCenterName !== preference2Center||
+            documentAndCenter.preference3.preferenceType !== preference3Type ||
+            documentAndCenter.preference3.examCenterName !== preference3Center
         )) {
             setDisabled(true);
         }
         else {
             setDisabled(false);
         }
-    }, [loading, documentAndCenter, photoUrl, signatureUrl, aadhaarFrontUrl, aadhaarBackUrl,
-        preference1Type, preference1Center, preference2Type, preference2Center, setDisabled]);
+    }, [loading, documentAndCenter, photoUrl, signatureUrl, aadhaarFrontUrl, aadhaarBackUrl, preference1Type, preference1Center, preference2Type, preference2Center, setDisabled, preference3Type, preference3Center]);
 
-        // reset the form value with stored value
+    // reset the form value with stored value
     useEffect(() => {
         setLoading(true);
         if (documentAndCenter) {
-            console.log('Resetting form with:', documentAndCenter);
             form.reset(documentAndCenter);
         }
 
@@ -262,7 +249,7 @@ export function DocumentAndCenterForm() {
                                             <FormControl>
                                                 <CloudinaryUploadWidget
                                                     onUpload={(info) => {
-                                                        field.onChange(info.secure_url); 
+                                                        field.onChange(info.secure_url);
                                                     }}
                                                     buttonText="Upload Aadhaar Back"
                                                     disabled={false}
@@ -307,10 +294,15 @@ export function DocumentAndCenterForm() {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectItem value="DELHI_NCR">Delhi NCR</SelectItem>
-                                                        <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
+                                                        <SelectItem value="LUCKNOW">Lucknow</SelectItem>
                                                         <SelectItem value="AHMEDABAD">Ahmedabad</SelectItem>
+                                                        <SelectItem value="BHOPAL">Bhopal</SelectItem>
+                                                        <SelectItem value="MUMBAI">Mumbai</SelectItem>
                                                         <SelectItem value="KOLKATA">Kolkata</SelectItem>
-                                                        <SelectItem value="HARYANA">Haryana</SelectItem>
+                                                        <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
+                                                        <SelectItem value="RANCHI">Ranchi</SelectItem>
+                                                        <SelectItem value="PATNA">Patna</SelectItem>
+                                                        <SelectItem value="BANGLORE">Bangalore</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -331,10 +323,15 @@ export function DocumentAndCenterForm() {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectItem value="DELHI_NCR">Delhi NCR</SelectItem>
-                                                        <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
+                                                        <SelectItem value="LUCKNOW">Lucknow</SelectItem>
                                                         <SelectItem value="AHMEDABAD">Ahmedabad</SelectItem>
+                                                        <SelectItem value="BHOPAL">Bhopal</SelectItem>
+                                                        <SelectItem value="MUMBAI">Mumbai</SelectItem>
                                                         <SelectItem value="KOLKATA">Kolkata</SelectItem>
-                                                        <SelectItem value="HARYANA">Haryana</SelectItem>
+                                                        <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
+                                                        <SelectItem value="RANCHI">Ranchi</SelectItem>
+                                                        <SelectItem value="PATNA">Patna</SelectItem>
+                                                        <SelectItem value="BANGLORE">Bangalore</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -342,6 +339,37 @@ export function DocumentAndCenterForm() {
                                         </FormItem>
                                     )}
                                 />
+
+                                <FormField
+                                    control={form.control}
+                                    name="preference3.examCenterName"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Third Choice</FormLabel>
+                                            <FormControl>
+                                                <Select onValueChange={field.onChange} value={field.value}>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select Exam Center" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="DELHI_NCR">Delhi NCR</SelectItem>
+                                                        <SelectItem value="LUCKNOW">Lucknow</SelectItem>
+                                                        <SelectItem value="AHMEDABAD">Ahmedabad</SelectItem>
+                                                        <SelectItem value="BHOPAL">Bhopal</SelectItem>
+                                                        <SelectItem value="MUMBAI">Mumbai</SelectItem>
+                                                        <SelectItem value="KOLKATA">Kolkata</SelectItem>
+                                                        <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
+                                                        <SelectItem value="RANCHI">Ranchi</SelectItem>
+                                                        <SelectItem value="PATNA">Patna</SelectItem>
+                                                        <SelectItem value="BANGLORE">Bangalore</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
 
                             </CardContent>
                         </Card>
@@ -401,13 +429,7 @@ export function DocumentAndCenterFormSkeleton() {
 }
 
 
-export const preferenceObj = {
-    "DELHI_NCR": "Delhi NCR",
-    "BHUBANESWAR": "Bhubaneswar",
-    "AHMEDABAD": "Ahmedabad",
-    "KOLKATA": "Kolkata",
-    "HARYANA": "Haryana"
-}
+
 
 
 export function DocumentAndCenterPage() {
@@ -475,22 +497,21 @@ export function DocumentAndCenterPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div>
-                            <strong>Preferred Exam Center:</strong>
-                            <p>
-                                {documentAndCenter?.preference1.examCenterName
-                                    ? preferenceObj[documentAndCenter.preference1.examCenterName]
-                                    : "Not selected"}
-                            </p>
-                        </div>
-                        <div>
-                            <strong>Alternative Exam Center:</strong>
-                            <p>
-                                {documentAndCenter?.preference2.examCenterName
-                                    ? preferenceObj[documentAndCenter.preference2.examCenterName]
-                                    : "Not selected"}
-                            </p>
-                        </div>
+                        {documentAndCenter?.preference1 && (
+                            <div>
+                                <strong>First Choice:</strong> {preferenceObj[documentAndCenter.preference1.examCenterName as keyof typeof preferenceObj] || 'Not Selected'}
+                            </div>
+                        )}
+                        {documentAndCenter?.preference2 && (
+                            <div>
+                                <strong>Second Choice:</strong> {preferenceObj[documentAndCenter.preference2.examCenterName as keyof typeof preferenceObj] || 'Not Selected'}
+                            </div>
+                        )}
+                        {documentAndCenter?.preference3 && (
+                            <div>
+                                <strong>Third Choice:</strong> {preferenceObj[documentAndCenter.preference3.examCenterName as keyof typeof preferenceObj] || 'Not Selected'}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </CardContent>

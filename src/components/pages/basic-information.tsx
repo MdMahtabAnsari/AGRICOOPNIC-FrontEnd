@@ -27,7 +27,7 @@ import { useDebounceCallback } from "usehooks-ts";
 import { isAadhaarExists, isEmailExists, isPhoneExists } from "@/lib/api/user.ts";
 
 import { aadhaar as aadhaarSchema, email as emailSchema, phone as phoneSchema } from "@/lib/schemas/common.schema.ts";
-
+import { jobPostObj,categoryObj } from "@/lib/helpers/type-object";
 
 export function BasicInformationForm() {
     const isEmailVerified = useEmailVerifiedStore((state) => state.isVerified);
@@ -107,7 +107,6 @@ export function BasicInformationForm() {
             return;
         }
         const response = await isEmailExists(email);
-        console.log("Email exists response:", response);
         if (response.status === "success") {
             setIsEmailExist(response.data);
             if (response.data) {
@@ -133,7 +132,6 @@ export function BasicInformationForm() {
             return;
         }
         const response = await isPhoneExists(phone);
-        console.log("Phone exists response:", response);
         if (response.status === "success") {
             setIsPhoneExists(response.data);
             if (response.data) {
@@ -159,7 +157,6 @@ export function BasicInformationForm() {
             return;
         }
         const response = await isAadhaarExists(aadhaar);
-        console.log("Aadhaar exists response:", response);
         if (response.status === "success") {
             setIsAadhaarExist(response.data);
             if (response.data) {
@@ -223,7 +220,6 @@ export function BasicInformationForm() {
         }
         setIsOtpSending(true);
         const response = await requestOtp(email);
-        console.log("OTP request response:", response);
         if (response.status === "success") {
             setIsOtpSent(true);
             setOtpTimer(60); // Set timer for 60 seconds
@@ -232,12 +228,11 @@ export function BasicInformationForm() {
             toast.error(response.message || "OTP sending failed");
         }
         setIsOtpSending(false);
-    }, [email, setIsOtpSent]);
+    }, [email, isEmailExist]);
 
 
     const handleVerifyOtp = useCallback(async () => {
         const response = await verifyOtp(email, otp);
-        console.log("OTP verification response:", response);
         if (response.status === "success") {
             setEmailVerified(true);
             setIsOtpSent(false);
@@ -253,7 +248,6 @@ export function BasicInformationForm() {
     useEffect(() => {
         setLoading(true)
         if (basicInformation) {
-            console.log("Resetting with:", basicInformation);
 
             form.reset(basicInformation);
         }
@@ -407,14 +401,12 @@ export function BasicInformationForm() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value="ASSISTANT_BRANCH_MANAGER">Assistant Branch
-                                                            Manager</SelectItem>
-                                                        <SelectItem value="RELATIONSHIP_MANAGER">Relationship
-                                                            Manager</SelectItem>
-                                                        <SelectItem value="MULTITASKING_STAFF">Multitasking
-                                                            Staff</SelectItem>
-                                                        <SelectItem value="BLOCK_SUPERVISOR">Block
-                                                            Supervisor</SelectItem>
+                                                        <SelectItem value="MTS">{jobPostObj.MTS}</SelectItem>
+                                                        <SelectItem value="SUPERVISOR">{jobPostObj.SUPERVISOR}</SelectItem>
+                                                        <SelectItem value="CLERK">{jobPostObj.CLERK}</SelectItem>
+                                                        <SelectItem value="ASSISTANT_AGRICULTURE_OFFICER">{jobPostObj.ASSISTANT_AGRICULTURE_OFFICER}</SelectItem>
+                                                        <SelectItem value="AGRICULTURE_OFFICER">{jobPostObj.AGRICULTURE_OFFICER}</SelectItem>
+                                                        <SelectItem value="FIELD_OFFICER">{jobPostObj.FIELD_OFFICER}</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -442,10 +434,9 @@ export function BasicInformationForm() {
                                                         <SelectValue placeholder="Select category type" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="GENERAL">General</SelectItem>
-                                                        <SelectItem value="EWS_OR_OBC">EWS/OBC</SelectItem>
-                                                        <SelectItem value="SC_OR_ST">SC/ST</SelectItem>
-                                                        <SelectItem value="PWBD">PWBD</SelectItem>
+                                                        <SelectItem value="EWS_OR_OBC">{categoryObj.EWS_OR_OBC}</SelectItem>
+                                                        <SelectItem value="SC_OR_ST">{categoryObj.SC_OR_ST}</SelectItem>
+                                                        <SelectItem value="GENERAL">{categoryObj.GENERAL}</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -510,19 +501,7 @@ export function BasicInformationPageSkeleton() {
     );
 }
 
-export const categoryObj = {
-    "EWS_OR_OBC": "EWS/OBC",
-    "SC_OR_ST": "SC/ST",
-    "PWBD": "PWBD",
-    "GENERAL": "General"
-};
 
-export const jobPostObj = {
-    "ASSISTANT_BRANCH_MANAGER": "Assistant Branch Manager",
-    "RELATIONSHIP_MANAGER": "Relationship Manager",
-    "MULTITASKING_STAFF": "Multitasking Staff",
-    "BLOCK_SUPERVISOR": "Block Supervisor"
-}
 
 export function BasicInformationPage() {
     const basicInformation = useBasicInformationStore((state) => state.basicInformation);

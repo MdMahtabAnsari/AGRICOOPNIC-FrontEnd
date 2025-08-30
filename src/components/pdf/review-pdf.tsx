@@ -9,15 +9,13 @@ import {
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 
-import { jobPostObj, categoryObj} from "../pages/basic-information";
-import { preferenceObj } from "../pages/document-and-center-form";
-import { marksTypeObj } from "../pages/education-detail-form";
-import { genderObj } from "../pages/family-address-form";
 import type { BasicInformationSchema } from "@/lib/schemas/pages/basicInformation.schema";
 import type { FamilyAndAddressSchema } from "@/lib/schemas/pages/familyAndAddress.schema";
-import type { EducationDetailsSchema } from "@/lib/schemas/pages/educationDetails.schema";
+import type { EducationDetailSchema10Th, EducationDetailSchema12Th, EducationDetailSchemaGraduation } from "@/lib/schemas/pages/educationDetails.schema";
 import type { DocumentAndCenterSchema } from "@/lib/schemas/pages/document-and-prefrence-schema";
 import type { JobPostResponseSchema } from "@/lib/schemas/api-response/jobPost.schema";
+
+import { jobPostObj, categoryObj, genderObj, preferenceObj, marksTypeObj } from "@/lib/helpers/type-object";
 
 // Register emoji fallback
 Font.registerEmojiSource({
@@ -274,11 +272,11 @@ export const ReviewPDFDocument = ({
   documentAndCenter,
   jobPost,
 }: {
-    basicInformation: BasicInformationSchema;
-    familyAndAddress: FamilyAndAddressSchema;
-    educationDetails: EducationDetailsSchema;
-    documentAndCenter: DocumentAndCenterSchema;
-    jobPost: JobPostResponseSchema;
+  basicInformation: BasicInformationSchema;
+  familyAndAddress: FamilyAndAddressSchema;
+  educationDetails: EducationDetailSchema10Th | EducationDetailSchema12Th | EducationDetailSchemaGraduation;
+  documentAndCenter: DocumentAndCenterSchema;
+  jobPost: JobPostResponseSchema;
 }) => (
   <Document>
     {/* Single Page with all content */}
@@ -337,7 +335,7 @@ export const ReviewPDFDocument = ({
             <Text style={styles.label}>Gender: <Text style={styles.value}>{genderObj[familyAndAddress?.personalDetails?.gender as keyof typeof genderObj] || "N/A"}</Text></Text>
           </View>
         </View>
-        
+
         <Text style={styles.subheading}>Addresses</Text>
         <Text style={styles.value}>
           <Text style={styles.label}>Permanent: </Text>
@@ -354,42 +352,63 @@ export const ReviewPDFDocument = ({
         <Text style={styles.sectionHeader}>Exam Centers</Text>
         <Text style={styles.label}>1st Choice: <Text style={styles.value}>{preferenceObj[documentAndCenter?.preference1?.examCenterName as keyof typeof preferenceObj] || "N/A"}</Text></Text>
         <Text style={styles.label}>2nd Choice: <Text style={styles.value}>{preferenceObj[documentAndCenter?.preference2?.examCenterName as keyof typeof preferenceObj] || "N/A"}</Text></Text>
+        <Text style={styles.label}>3rd Choice: <Text style={styles.value}>{preferenceObj[documentAndCenter?.preference3?.examCenterName as keyof typeof preferenceObj] || "N/A"}</Text></Text>
       </View>
 
       {/* Education - Compact */}
       <View style={styles.compactSection}>
         <Text style={styles.sectionHeader}>Educational Qualifications</Text>
-        {["10th", "12th", "Graduation"].map((key) => {
-          let data;
-          if (key === "10th") {
-            data = educationDetails?._10th;
-          } else if (key === "12th") {
-            data = educationDetails?._12th;
-          } else if (key === "Graduation") {
-            data = educationDetails?.graduation;
-          }
-          if (!data) return null;
-
-          return (
-            <View key={key} style={{ marginBottom: 6 }}>
-              <Text style={styles.subheading}>{key}</Text>
-              <View style={styles.twoColumnRow}>
-                <View style={styles.column}>
-                  <Text style={styles.label}>{key === "10th" || key === "12th" ? "School: " : "College: "}<Text style={styles.value}>{data?.institution || "N/A"}</Text></Text>
-                  <Text style={styles.label}>{key === "10th" || key === "12th" ? "Board: " : "University: "}<Text style={styles.value}>{data?.boardOrUniversity || "N/A"}</Text></Text>
-                  {key === "Graduation" || key === "12th" && (
-                    <Text style={styles.label}>{key === "12th" ? "Stream: " : "Specialization: "}<Text style={styles.value}>{data?.subjectOrSpecialization || "N/A"}</Text></Text>
-                  )}
-                </View>
-                <View style={styles.column}>
-                    <Text style={styles.label}>Marks Type: <Text style={styles.value}>{marksTypeObj[data?.marksType as keyof typeof marksTypeObj] || "N/A"}</Text></Text>
-                  <Text style={styles.label}>Marks: <Text style={styles.value}>{data?.marks || "N/A"}</Text></Text>
-                  <Text style={styles.label}>Year: <Text style={styles.value}>{data?.yearOfPassing || "N/A"}</Text></Text>
-                </View>
+        {/* Render 10th, 12th, Graduation details separately to avoid union type issues */}
+        {"_10th" in educationDetails && educationDetails._10th && (
+          <View style={{ marginBottom: 6 }}>
+            <Text style={styles.subheading}>10th</Text>
+            <View style={styles.twoColumnRow}>
+              <View style={styles.column}>
+                <Text style={styles.label}>School: <Text style={styles.value}>{educationDetails._10th.institution || "N/A"}</Text></Text>
+                <Text style={styles.label}>Board: <Text style={styles.value}>{educationDetails._10th.boardOrUniversity || "N/A"}</Text></Text>
+              </View>
+              <View style={styles.column}>
+                <Text style={styles.label}>Marks Type: <Text style={styles.value}>{marksTypeObj[educationDetails._10th.marksType as keyof typeof marksTypeObj] || "N/A"}</Text></Text>
+                <Text style={styles.label}>Marks: <Text style={styles.value}>{educationDetails._10th.marks || "N/A"}</Text></Text>
+                <Text style={styles.label}>Year: <Text style={styles.value}>{educationDetails._10th.yearOfPassing || "N/A"}</Text></Text>
               </View>
             </View>
-          );
-        })}
+          </View>
+        )}
+        {"_12th" in educationDetails && educationDetails._12th && (
+          <View style={{ marginBottom: 6 }}>
+            <Text style={styles.subheading}>12th</Text>
+            <View style={styles.twoColumnRow}>
+              <View style={styles.column}>
+                <Text style={styles.label}>School: <Text style={styles.value}>{educationDetails._12th.institution || "N/A"}</Text></Text>
+                <Text style={styles.label}>Board: <Text style={styles.value}>{educationDetails._12th.boardOrUniversity || "N/A"}</Text></Text>
+                <Text style={styles.label}>Stream: <Text style={styles.value}>{educationDetails._12th.subjectOrSpecialization || "N/A"}</Text></Text>
+              </View>
+              <View style={styles.column}>
+                <Text style={styles.label}>Marks Type: <Text style={styles.value}>{marksTypeObj[educationDetails._12th.marksType as keyof typeof marksTypeObj] || "N/A"}</Text></Text>
+                <Text style={styles.label}>Marks: <Text style={styles.value}>{educationDetails._12th.marks || "N/A"}</Text></Text>
+                <Text style={styles.label}>Year: <Text style={styles.value}>{educationDetails._12th.yearOfPassing || "N/A"}</Text></Text>
+              </View>
+            </View>
+          </View>
+        )}
+        {"graduation" in educationDetails && educationDetails.graduation && (
+          <View style={{ marginBottom: 6 }}>
+            <Text style={styles.subheading}>Graduation</Text>
+            <View style={styles.twoColumnRow}>
+              <View style={styles.column}>
+                <Text style={styles.label}>College: <Text style={styles.value}>{educationDetails.graduation.institution || "N/A"}</Text></Text>
+                <Text style={styles.label}>University: <Text style={styles.value}>{educationDetails.graduation.boardOrUniversity || "N/A"}</Text></Text>
+                <Text style={styles.label}>Specialization: <Text style={styles.value}>{educationDetails.graduation.subjectOrSpecialization || "N/A"}</Text></Text>
+              </View>
+              <View style={styles.column}>
+                <Text style={styles.label}>Marks Type: <Text style={styles.value}>{marksTypeObj[educationDetails.graduation.marksType as keyof typeof marksTypeObj] || "N/A"}</Text></Text>
+                <Text style={styles.label}>Marks: <Text style={styles.value}>{educationDetails.graduation.marks || "N/A"}</Text></Text>
+                <Text style={styles.label}>Year: <Text style={styles.value}>{educationDetails.graduation.yearOfPassing || "N/A"}</Text></Text>
+              </View>
+            </View>
+          </View>
+        )}
       </View>
     </Page>
 
@@ -398,7 +417,7 @@ export const ReviewPDFDocument = ({
       {/* Documents Container - Exactly 70% of page */}
       <View style={styles.documentsContainer}>
         <Text style={styles.sectionHeader}>📄 Uploaded Documents</Text>
-        
+
         {/* Documents Grid - 2 columns, flex-wrap */}
         <View style={styles.documentsGrid}>
           {(["photo", "signature", "aadhaarFront", "aadhaarBack"] as const).map((key) => {
@@ -427,7 +446,7 @@ export const ReviewPDFDocument = ({
         </View>
 
         {/* Show placeholder when no documents at all */}
-        {!documentAndCenter || !(["photo", "signature", "aadhaarFront", "aadhaarBack"] as const).some(key => 
+        {!documentAndCenter || !(["photo", "signature", "aadhaarFront", "aadhaarBack"] as const).some(key =>
           documentAndCenter[key]?.url
         ) ? (
           <View style={styles.placeholderContainer}>

@@ -41,6 +41,7 @@ import { useFamilyAndAddressStore } from "@/store/family-address-store.ts";
 import { useFormStepStore } from "@/store/form-step-store.ts";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { genderObj } from "@/lib/helpers/type-object";
 
 export function FamilyAddressForm() {
     const [loading, setLoading] = useState<boolean>(true);
@@ -232,9 +233,9 @@ export function FamilyAddressForm() {
                                                         <SelectValue placeholder="Select gender" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="MALE">Male</SelectItem>
-                                                        <SelectItem value="FEMALE">Female</SelectItem>
-                                                        <SelectItem value="OTHER">Other</SelectItem>
+                                                        <SelectItem value="MALE">{genderObj.MALE}</SelectItem>
+                                                        <SelectItem value="FEMALE">{genderObj.FEMALE}</SelectItem>
+                                                        <SelectItem value="OTHER">{genderObj.OTHER}</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -457,11 +458,7 @@ export const FamilyAddressFormSkeleton = () => {
 }
 
 
-export const genderObj = {
-    "MALE": "Male",
-    "FEMALE": "Female",
-    "OTHER": "Other"
-}
+
 
 
 export function FamilyAndAddressPage() {

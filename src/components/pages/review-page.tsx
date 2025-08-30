@@ -6,11 +6,11 @@ import { FamilyAndAddressPage } from "@/components/pages/family-address-form";
 import { EducationDetailsPage } from "@/components/pages/education-detail-form";
 import { DocumentAndCenterPage } from "@/components/pages/document-and-center-form";
 import { useBasicInformationStore } from "@/store/basic-information-store";
-import { useEducationDetailsStore } from "@/store/education-details-store";
+import { useEducationDetailsStore10Th, useEducationDetailsStore12Th, useEducationDetailsStoreGraduation } from "@/store/education-details-store";
 import { useFamilyAndAddressStore } from "@/store/family-address-store";
 import { useDocumentAndCenterStore } from "@/store/document-and-center-store";
 import { useFormStepStore } from "@/store/form-step-store";
-import { DownloadPDFButton,DownloadPDFButtonSkeleton } from "@/components/pdf/download-button";
+import { DownloadPDFButton, DownloadPDFButtonSkeleton } from "@/components/pdf/download-button";
 import { createBasicInformation } from "@/lib/api/group/basic-information";
 import { createFamilyAndAddress } from "@/lib/api/group/family-and-address";
 import { createEducationDetails } from "@/lib/api/group/education-detail";
@@ -18,15 +18,18 @@ import { createDocumentAndCenter } from "@/lib/api/group/document-and-prefrence"
 import { Button } from "../ui/button";
 import { Loader } from "lucide-react";
 import { formSubmit } from "@/lib/api/formSubmit";
-import { createPayment, verifyPayment, getUserSuccessfulPayment } from "@/lib/api/payment";
-import type { PaymentResponseSchema } from "@/lib/schemas/api-response/payment.schema";
+import { createRazorpayPayment, getUserSuccessfulPayment, verifyRazorpayPayment } from "@/lib/api/payment";
 import { toast } from "sonner";
 import { deleteUser } from "@/lib/api/user";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { getFormStatus } from "@/lib/api/formSubmit"
+import type { RazorpayResponse } from "@/providers/payment-provider";
+import { getFees } from "@/lib/api/fees";
 export function ReviewPage() {
     const basicInformation = useBasicInformationStore((state) => state.basicInformation);
-    const educationDetails = useEducationDetailsStore((state) => state.educationDetails);
+    const educationDetails10Th = useEducationDetailsStore10Th((state) => state.educationDetails);
+    const educationDetails12Th = useEducationDetailsStore12Th((state) => state.educationDetails);
+    const educationDetailsGraduation = useEducationDetailsStoreGraduation((state) => state.educationDetails);
     const documentAndCenter = useDocumentAndCenterStore((state) => state.documentAndCenter);
     const familyAndAddress = useFamilyAndAddressStore((state) => state.familyAndAddress);
     const [loading, setLoading] = useState<boolean>(false);
@@ -34,51 +37,49 @@ export function ReviewPage() {
     const [isPaymentSuccessful, setIsPaymentSuccessful] = useState<boolean>(false);
     const [paymentLoading, setPaymentLoading] = useState<boolean>(false);
     const [successfulSubmission, setSuccessfulSubmission] = useState<boolean>(false);
-    const [isRazorpayLoaded, setIsRazorpayLoaded] = useState<boolean>(false);
+    const [fees, setFees] = useState<number | null>(null);
 
-    // Dynamically load Razorpay script
-    useEffect(() => {
-        const scriptId = "razorpay-script";
-        if ((window as any).Razorpay) {
-            setIsRazorpayLoaded(true);
-            return;
-        }
-        if (!document.getElementById(scriptId)) {
-            const script = document.createElement("script");
-            script.id = scriptId;
-            script.src = "https://checkout.razorpay.com/v1/checkout.js";
-            script.async = true;
-            script.onload = () => setIsRazorpayLoaded(true);
-            script.onerror = () => setIsRazorpayLoaded(false);
-            document.body.appendChild(script);
-        } else {
-            const checkRazorpay = () => {
-                if ((window as any).Razorpay) {
-                    setIsRazorpayLoaded(true);
-                } else {
-                    setTimeout(checkRazorpay, 100);
-                }
-            };
-            checkRazorpay();
-        }
-    }, []);
 
     const fetchSuccessfulPayment = useCallback(async () => {
         setPaymentLoading(true);
         const response = await getUserSuccessfulPayment();
         if (response.status === "success") {
             setIsPaymentSuccessful(true);
-        } else {
-            toast.error(response.message || "Failed to fetch successful payments");
         }
         setPaymentLoading(false);
     }, []);
+
+    const fetchFees = useCallback(async () => {
+        if (!basicInformation) return;
+        const response = await getFees(basicInformation.category.categoryType);
+        if (response.status === "success") {
+            setFees(response.data.amount);
+        }
+    }, [basicInformation]);
+
+    const fetchSucessfulSubmission = useCallback(async () => {
+        const response = await getFormStatus();
+        if (response.status === "success") {
+            setSuccessfulSubmission(true);
+        } else {
+            setSuccessfulSubmission(false);
+        }
+    }, [])
+
+    useEffect(() => {
+        fetchFees();
+    }, [fetchFees]);
+
+    useEffect(() => {
+        fetchSucessfulSubmission();
+    }, [fetchSucessfulSubmission]);
 
     useEffect(() => {
         fetchSuccessfulPayment();
     }, [fetchSuccessfulPayment]);
 
     const handleSubmit = useCallback(async () => {
+        const educationDetails = basicInformation?.jobPost.name === "MTS" ? educationDetails10Th : (basicInformation?.jobPost.name === "SUPERVISOR" || basicInformation?.jobPost.name === "CLERK" || basicInformation?.jobPost.name === "FIELD_OFFICER") ? educationDetails12Th : educationDetailsGraduation;
         if (!basicInformation || !educationDetails || !documentAndCenter || !familyAndAddress) {
             return;
         }
@@ -96,6 +97,7 @@ export function ReviewPage() {
             toast.error(formSubmitInfo.message);
             await deleteUser();
             setLoading(false);
+            setPrevDisabled(false);
             return;
         }
         setSuccessfulSubmission(true);
@@ -108,7 +110,7 @@ export function ReviewPage() {
             familyResult,
             formSubmitInfo
         }
-    }, [basicInformation, educationDetails, documentAndCenter, familyAndAddress, createBasicInformation, createEducationDetails, createFamilyAndAddress, setPrevDisabled]);
+    }, [basicInformation, educationDetails10Th, educationDetails12Th, educationDetailsGraduation, documentAndCenter, familyAndAddress, setPrevDisabled]);
 
     const handlePayment = useCallback(async () => {
         setIsPaymentSuccessful(false);
@@ -116,7 +118,7 @@ export function ReviewPage() {
             return;
         }
         setLoading(true);
-        const paymentInfo = await createPayment({
+        const paymentInfo = await createRazorpayPayment({
             category: basicInformation.category.categoryType,
             name: basicInformation.user.name,
             email: basicInformation.user.email,
@@ -124,37 +126,33 @@ export function ReviewPage() {
         });
         if (paymentInfo.status !== "success") {
             toast.error(paymentInfo.message);
+        }
+        if (!window.Razorpay) {
+            toast.error("Payment service not loaded. Please refresh the page.");
             setLoading(false);
             return;
         }
-        // Wait for Razorpay script to load
-        if (!(window as any).Razorpay) {
-            toast.error("Payment gateway not available. Please refresh and try again.");
-            setLoading(false);
-            return;
-        }
-        const data = paymentInfo.data as PaymentResponseSchema;
-        const order = data.order;
-        const paymentObject = new (window as any).Razorpay({
-            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-            order_id: order.id,
-            ...data,
-            handler: async (response: any) => {
-                const verifyData = {
+        const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
+        const paymentObj = new window.Razorpay({
+            key: key,
+            order_id: paymentInfo.data.order.id,
+            ...paymentInfo.data,
+            handler: async (response: RazorpayResponse) => {
+                console.log("Razorpay Payment response:", response);
+                const verifyResponse = await verifyRazorpayPayment({
                     orderId: response.razorpay_order_id,
                     paymentId: response.razorpay_payment_id,
                     signature: response.razorpay_signature
-                };
-                const verifyResponse = await verifyPayment(verifyData);
-                if (verifyResponse.status === "success") {
-                    toast.success("Payment successful!");
+                });
+                if (verifyResponse.status === 'success') {
+                    toast.success("Payment successful");
                     setIsPaymentSuccessful(true);
                 } else {
-                    toast.error(verifyResponse.message);
+                    toast.error(verifyResponse.message || "Failed to verify payment");
                 }
             }
         });
-        paymentObject.open();
+        paymentObj.open();
         setLoading(false);
     }, [basicInformation]);
 
@@ -189,10 +187,16 @@ export function ReviewPage() {
                 {!isPaymentSuccessful && (
                     <Button
                         onClick={handlePayment}
-                        disabled={loading || !isRazorpayLoaded}
+                        disabled={loading}
                         className="w-full cursor-pointer"
                     >
-                        {loading ? <Loader className="animate-spin" /> : !isRazorpayLoaded ? "Loading Payment..." : "Pay Now"}
+                        {loading ? (
+                            <Loader className="animate-spin" />
+                        ) : (
+                            <>
+                                Pay Now {fees && <>₹{fees}</>}
+                            </>
+                        )}
                     </Button>
                 )}
             </CardFooter>

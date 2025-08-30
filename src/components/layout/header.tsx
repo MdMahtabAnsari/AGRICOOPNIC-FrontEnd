@@ -8,7 +8,7 @@ export function Header() {
         <div className="flex items-center space-x-2">
           <Briefcase className="h-8 w-8" />
             <NavLink to="/" className="text-xl font-bold text-primary hover:text-primary/80">
-                Agora
+              AGRICOOPNIC
             </NavLink>
         </div>
         <ModeToggle />

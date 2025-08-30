@@ -43,9 +43,9 @@ export const HomePage = () => {
       {/* Hero Section */}
       <section className="bg-primary/5 py-16 mb-12">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-extrabold mb-6 text-primary">Agora Job Openings</h1>
+          <h1 className="text-5xl font-extrabold mb-6 text-primary">AGRICOOPNIC</h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Discover exciting career opportunities at JobAgora. Click below to apply for current job openings and start your journey with us!
+            Discover exciting career opportunities at AGRICOOPNIC. Click below to apply for current job openings and start your journey with us!
           </p>
           <Button
             className='cursor-pointer'

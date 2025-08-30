@@ -46,14 +46,10 @@ export function ApplicationFormPage() {
     setLoading(true);
     const response = await getFormStatus();
     if (response.status === "success") {
-      console.log("Form status fetched successfully:", response.data);
       if (response.data.status) {
         toast.success("Form already submitted successfully!");
         navigate("/");
       }
-    } else {
-      toast.error(response.message || "Failed to fetch form status");
-
     }
     setLoading(false);
   }, [navigate]);
@@ -70,15 +66,18 @@ export function ApplicationFormPage() {
 
   useEffect(() => {
     checkUserLoggedIn();
+  }, [checkUserLoggedIn]);
+
+  useEffect(() => {
     fetchFormStatus();
-  }, []);
+  }, [fetchFormStatus]);
 
   if (loading) {
     return <ApplicationFormPageSkeleton />;
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-10 p-2 sm:p-4">
+    <div className="w-full max-w-4xl mx-auto mt-10 p-2 sm:p-4 scroll-auto overflow-auto">
       <Card className="w-full">
         <CardHeader className="text-center">
           <CardTitle>Application Form</CardTitle>
@@ -155,13 +154,15 @@ export function ApplicationFormPageSkeleton() {
           <Skeleton className="h-3 sm:h-4 w-24 sm:w-28 lg:w-32 mx-auto mb-4" />
           <CardContent className="flex flex-col items-center gap-3 px-0">
             {/* Stepper skeleton - responsive */}
-            <div className="flex items-center gap-1 sm:gap-2 w-full overflow-x-auto">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center flex-shrink-0">
-                  <Skeleton className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
-                  {i < 4 && <Skeleton className="h-0.5 w-8 sm:w-12 mx-1 sm:mx-2" />}
-                </div>
-              ))}
+            <div className="w-full flex justify-center">
+              <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center flex-shrink-0">
+                    <Skeleton className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
+                    {i < 4 && <Skeleton className="h-0.5 w-8 sm:w-12 mx-1 sm:mx-2" />}
+                  </div>
+                ))}
+              </div>
             </div>
             {/* Progress bar skeleton - responsive */}
             <Skeleton className="h-1.5 sm:h-2 w-full max-w-xs sm:max-w-md" />

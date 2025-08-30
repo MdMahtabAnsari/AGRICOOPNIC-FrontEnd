@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useCallback } from "react";
-import { authSchema } from "@/lib/schemas/auth.shema";
-import type{ AuthSchema } from "@/lib/schemas/auth.shema";
+import { signInSchema } from "@/lib/schemas/auth.shema";
+import type { SignInSchema } from "@/lib/schemas/auth.shema";
 import { signIn } from "@/lib/api/auth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -16,10 +16,10 @@ import { Loader } from "lucide-react";
 
 export const SignInForm = () => {
 
-    const form = useForm<AuthSchema>({
-        resolver: zodResolver(authSchema),
+    const form = useForm<SignInSchema>({
+        resolver: zodResolver(signInSchema),
         defaultValues: {
-            userId: "",
+            identifier: "",
             password: ""
         },
         mode: "onChange"
@@ -27,19 +27,15 @@ export const SignInForm = () => {
 
     const navigate = useNavigate();
 
-    const handleSubmit = useCallback(async (data: AuthSchema) => {
-        try {
-            const response = await signIn(data);
-            if (response.status === 'success') {
-                toast.success("Sign In successful");
-                navigate("/");
-            } else {
-                toast.error(response.message || "Sign In failed");
-            }
-        } catch (error) {
-            toast.error("An unexpected error occurred");
+    const handleSubmit = useCallback(async (data: SignInSchema) => {
+        const response = await signIn(data);
+        if (response.status === 'success') {
+            toast.success("Sign In successful");
+            navigate("/");
+        } else {
+            toast.error(response.message || "Sign In failed");
         }
-    }, []);
+    }, [navigate]);
 
     return (
         <Card className="w-full h-full border-none">
@@ -54,12 +50,12 @@ export const SignInForm = () => {
                             <form onSubmit={form.handleSubmit(handleSubmit)} className="w-full space-y-4 py-3">
                                 <FormField
                                     control={form.control}
-                                    name="userId"
+                                    name="identifier"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>User ID</FormLabel>
+                                            <FormLabel>UserId/Email</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Enter your user ID" {...field} />
+                                                <Input placeholder="Enter your userId/email" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -79,9 +75,9 @@ export const SignInForm = () => {
                                     )}
                                 />
 
-                                <Button type="submit" className="w-full mt-4 cursor-pointer" disabled={form.formState.isSubmitting||form.formState.isSubmitting}>
+                                <Button type="submit" className="w-full mt-4 cursor-pointer" disabled={form.formState.isSubmitting || form.formState.isSubmitting}>
                                     {form.formState.isSubmitting ? <Loader className="animate-spin h-4 w-4" /> : "Sign In"}
-                                    </Button>
+                                </Button>
                             </form>
                         </Form>
                     </CardContent>

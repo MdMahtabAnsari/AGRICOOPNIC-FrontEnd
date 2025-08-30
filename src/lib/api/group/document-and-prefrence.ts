@@ -3,13 +3,24 @@ import { createExaminationPreference } from "../examination-prefrence";
 import type { DocumentAndCenterSchema } from "@/lib/schemas/pages/document-and-prefrence-schema";
 
 export const createDocumentAndCenter = async (documentAndCenter: DocumentAndCenterSchema) => {
-  const photoResponse = await createDocument(documentAndCenter.photo);
-  const signatureResponse = await createDocument(documentAndCenter.signature);
-  const aadhaarFrontResponse = await createDocument(documentAndCenter.aadhaarFront);
-  const aadhaarBackResponse = await createDocument(documentAndCenter.aadhaarBack);
-  
-  const preference1Response = await createExaminationPreference(documentAndCenter.preference1);
-  const preference2Response = await createExaminationPreference(documentAndCenter.preference2);
+  const [
+    photoResponse,
+    signatureResponse,
+    aadhaarFrontResponse,
+    aadhaarBackResponse,
+    preference1Response,
+    preference2Response,
+    preference3Response,
+  ] = await Promise.all([
+    createDocument(documentAndCenter.photo),
+    createDocument(documentAndCenter.signature),
+    createDocument(documentAndCenter.aadhaarFront),
+    createDocument(documentAndCenter.aadhaarBack),
+    createExaminationPreference(documentAndCenter.preference1),
+    createExaminationPreference(documentAndCenter.preference2),
+    createExaminationPreference(documentAndCenter.preference3),
+  ]);
+
 
   return {
     photo: photoResponse,
@@ -17,6 +28,7 @@ export const createDocumentAndCenter = async (documentAndCenter: DocumentAndCent
     aadhaarFront: aadhaarFrontResponse,
     aadhaarBack: aadhaarBackResponse,
     preference1: preference1Response,
-    preference2: preference2Response
+    preference2: preference2Response,
+    preference3: preference3Response,
   };
 };

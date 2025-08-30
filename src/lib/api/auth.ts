@@ -1,10 +1,10 @@
 import api from "@/lib/api/api";
 import type { ApiResponseSchema } from "../schemas/api-response/api-response";
-import type { AuthSchema } from "../schemas/auth.shema";
+import type { SignUpSchema,SignInSchema,UserIdEmailObjectWithOptional } from "../schemas/auth.shema";
 import { AxiosError } from "axios";
 
 
-export const signup = async (data: AuthSchema): Promise<ApiResponseSchema> => {
+export const signup = async (data: SignUpSchema): Promise<ApiResponseSchema> => {
     try {
         const response = await api.post("/api/auth/signup", data);
         return response.data;
@@ -23,7 +23,7 @@ export const signup = async (data: AuthSchema): Promise<ApiResponseSchema> => {
 };
 
 
-export const signIn = async (data: AuthSchema): Promise<ApiResponseSchema> => {
+export const signIn = async (data: SignInSchema): Promise<ApiResponseSchema> => {
     try {
         const response = await api.post("/api/auth/signin", data);
         return response.data;
@@ -41,10 +41,13 @@ export const signIn = async (data: AuthSchema): Promise<ApiResponseSchema> => {
     }
 }
 
-export const checkUserIdAvailability = async (userId: string): Promise<ApiResponseSchema> => {
+export const checkUserAvailability = async (data: UserIdEmailObjectWithOptional): Promise<ApiResponseSchema> => {
     try {
-        const response = await api.get(`/api/auth/is-user-exists`,{
-            params: { userId }
+        const response = await api.get(`/api/auth/is-available`,{
+            params: {
+                userId: data.userId,
+                email: data.email
+            }
         });
         return response.data;
     } catch (error) {

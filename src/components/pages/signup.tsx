@@ -7,9 +7,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from 
 import { Input } from "@/components/ui/input"
 import { useCallback, useEffect, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
-import { authSchema,userIdSchema } from "@/lib/schemas/auth.shema";
-import type{ AuthSchema } from "@/lib/schemas/auth.shema";
-import { signup, checkUserIdAvailability } from "@/lib/api/auth";
+import { signUpSchema, userIdSchema } from "@/lib/schemas/auth.shema";
+import type { SignUpSchema } from "@/lib/schemas/auth.shema";
+import { signup, checkUserAvailability } from "@/lib/api/auth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
@@ -17,21 +17,26 @@ import { Loader } from "lucide-react";
 
 export const SignupForm = () => {
 
-    const form = useForm<AuthSchema>({
-        resolver: zodResolver(authSchema),
+    const form = useForm<SignUpSchema>({
+        resolver: zodResolver(signUpSchema),
         defaultValues: {
             userId: "",
-            password: ""
+            password: "",
+            email: ""
         },
         mode: "onChange"
     });
 
     const [debouncedUserId, setDebouncedUserId] = useState<string>("");
     const debouncedUserIdCheck = useDebounceCallback(setDebouncedUserId, 500);
+    const [debouncedEmail, setDebouncedEmail] = useState<string>("");
+    const debouncedEmailCheck = useDebounceCallback(setDebouncedEmail, 500);
     const [isUserIdExists, setIsUserIdExists] = useState<boolean>(false);
+    const [isEmailExists, setIsEmailExists] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const userId = form.watch("userId");
+    const email = form.watch("email");
 
 
     useEffect(() => {
@@ -40,22 +45,21 @@ export const SignupForm = () => {
         }
     }, [userId, debouncedUserIdCheck]);
 
-
     useEffect(() => {
-        if (debouncedUserId) {
-            isUserIdAvailabe(debouncedUserId);
+        if (email) {
+            debouncedEmailCheck(email);
         }
-    }, [debouncedUserId]);
+    }, [email, debouncedEmailCheck]);
 
 
     const isUserIdAvailabe = useCallback(async (userId: string) => {
-        if(!userIdSchema.safeParse(userId).success) {
+        if (!userIdSchema.safeParse(userId).success) {
             return;
         }
         setIsUserIdExists(false);
-        const response = await checkUserIdAvailability(userId);
-        if(response.status === 'success'){
-            if(response.data){
+        const response = await checkUserAvailability({ userId });
+        if (response.status === 'success') {
+            if (response.data) {
                 setIsUserIdExists(true);
                 form.setError("userId", { type: "manual", message: "User ID already exists" });
                 toast.error("User ID already exists");
@@ -66,25 +70,61 @@ export const SignupForm = () => {
             }
 
         }
-        else{
+        else {
             toast.error("Failed to check User ID availability");
             setIsUserIdExists(false);
         }
 
     }, [form]);
 
-    const handleSubmit = async (data: AuthSchema) => {
+    const isEmailAvailable = useCallback(async (email: string) => {
+        if (!email) return;
+        setIsEmailExists(false);
+        const response = await checkUserAvailability({ email });
+        if (response.status === 'success') {
+            if (response.data) {
+                setIsEmailExists(true);
+                form.setError("email", { type: "manual", message: "Email already exists" });
+                toast.error("Email already exists");
+            }
+            else {
+                setIsEmailExists(false);
+                toast.success("Email is available");
+            }
+
+        }
+        else {
+            toast.error("Failed to check Email availability");
+            setIsEmailExists(false);
+        }
+
+    }, [form]);
+
+    useEffect(() => {
+        if (debouncedUserId) {
+            isUserIdAvailabe(debouncedUserId);
+        }
+    }, [debouncedUserId, isUserIdAvailabe]);
+
+    useEffect(() => {
+        if (debouncedEmail) {
+            isEmailAvailable(debouncedEmail);
+        }
+    }, [debouncedEmail, isEmailAvailable]);
+
+
+    const handleSubmit = async (data: SignUpSchema) => {
         const response = await signup(data);
-        if(response.status === 'success'){
+        if (response.status === 'success') {
             toast.success("Signup successful");
             navigate("/signin");
         }
-        else{
+        else {
             toast.error(response.message || "Signup failed");
         }
     }
 
-    return(
+    return (
         <Card className="w-full h-full border-none">
             <CardContent className="flex items-center justify-center h-full">
                 <Card className="w-full max-w-md">
@@ -108,6 +148,20 @@ export const SignupForm = () => {
                                         </FormItem>
                                     )}
                                 />
+                                
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email</FormLabel>
+                                            <FormControl>
+                                                <Input type="email" placeholder="Enter your email" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                                 <FormField
                                     control={form.control}
                                     name="password"
@@ -122,9 +176,9 @@ export const SignupForm = () => {
                                     )}
                                 />
 
-                                <Button type="submit" className="w-full mt-4 cursor-pointer" disabled={isUserIdExists||form.formState.isSubmitting||form.formState.isSubmitting}>
+                                <Button type="submit" className="w-full mt-4 cursor-pointer" disabled={form.formState.isSubmitting || isUserIdExists || isEmailExists || !form.formState.isValid}>
                                     {form.formState.isSubmitting ? <Loader className="animate-spin h-4 w-4" /> : "Sign Up"}
-                                    </Button>
+                                </Button>
                             </form>
                         </Form>
                     </CardContent>
