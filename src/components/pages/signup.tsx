@@ -7,12 +7,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from 
 import { Input } from "@/components/ui/input"
 import { useCallback, useEffect, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
-import { signUpSchema, userIdSchema } from "@/lib/schemas/auth.shema";
+import { signUpSchema } from "@/lib/schemas/auth.shema";
 import type { SignUpSchema } from "@/lib/schemas/auth.shema";
+import { emailObject,userIdObject } from "@/lib/schemas/common.schema";
 import { signup, checkUserAvailability } from "@/lib/api/auth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
+import { isUserLoggedIn } from "@/lib/api/auth"
 
 
 export const SignupForm = () => {
@@ -51,9 +53,20 @@ export const SignupForm = () => {
         }
     }, [email, debouncedEmailCheck]);
 
+    const checkUserLoggedIn = useCallback(async () => {
+            const response = await isUserLoggedIn();
+            if (response.status === "success") {
+                navigate("/");
+            }
+        }, [navigate]);
+    
+        useEffect(() => {
+            checkUserLoggedIn();
+        }, [checkUserLoggedIn]);
 
-    const isUserIdAvailabe = useCallback(async (userId: string) => {
-        if (!userIdSchema.safeParse(userId).success) {
+
+    const isUserIdAvailable = useCallback(async (userId: string) => {
+        if (!userIdObject.safeParse({ userId }).success) {
             return;
         }
         setIsUserIdExists(false);
@@ -78,7 +91,9 @@ export const SignupForm = () => {
     }, [form]);
 
     const isEmailAvailable = useCallback(async (email: string) => {
-        if (!email) return;
+        if (!emailObject.safeParse({ email }).success) {
+            return;
+        }
         setIsEmailExists(false);
         const response = await checkUserAvailability({ email });
         if (response.status === 'success') {
@@ -102,9 +117,9 @@ export const SignupForm = () => {
 
     useEffect(() => {
         if (debouncedUserId) {
-            isUserIdAvailabe(debouncedUserId);
+            isUserIdAvailable(debouncedUserId);
         }
-    }, [debouncedUserId, isUserIdAvailabe]);
+    }, [debouncedUserId, isUserIdAvailable]);
 
     useEffect(() => {
         if (debouncedEmail) {

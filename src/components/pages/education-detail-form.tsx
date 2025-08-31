@@ -248,8 +248,8 @@ export function EducationDetailFormGraduation() {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle>12th Details</CardTitle>
-                                <CardDescription>Details of your 12th grade education</CardDescription>
+                                <CardTitle>12th/Diploma Details</CardTitle>
+                                <CardDescription>Details of your 12th/Diploma grade education</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FormField
@@ -257,9 +257,9 @@ export function EducationDetailFormGraduation() {
                                     name="_12th.institution"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>School</FormLabel>
+                                            <FormLabel>School/College</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Enter your school" {...field} />
+                                                <Input placeholder="Enter your school/college" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -270,9 +270,9 @@ export function EducationDetailFormGraduation() {
                                     name="_12th.boardOrUniversity"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Board</FormLabel>
+                                            <FormLabel>Board/University</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Enter your board" {...field} />
+                                                <Input placeholder="Enter your board/university" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -635,8 +635,8 @@ export function EducationDetailForm12Th() {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle>12th Details</CardTitle>
-                                <CardDescription>Details of your 12th grade education</CardDescription>
+                                <CardTitle>12th/Diploma Details</CardTitle>
+                                <CardDescription>Details of your 12th/Diploma grade education</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FormField
@@ -644,9 +644,9 @@ export function EducationDetailForm12Th() {
                                     name="_12th.institution"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>School</FormLabel>
+                                            <FormLabel>School/College</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Enter your school" {...field} />
+                                                <Input placeholder="Enter your school/college" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -657,9 +657,9 @@ export function EducationDetailForm12Th() {
                                     name="_12th.boardOrUniversity"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Board</FormLabel>
+                                            <FormLabel>Board/University</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Enter your board" {...field} />
+                                                <Input placeholder="Enter your board/university" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -1011,12 +1011,12 @@ export function EducationDetailsPageGraduation() {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>12th Details</CardTitle>
-                        <CardDescription>Details of your 12th grade education</CardDescription>
+                        <CardTitle>12th/Diploma Details</CardTitle>
+                        <CardDescription>Details of your 12th/Diploma grade education</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p><strong>School:</strong> {educationDetails?._12th?.institution || "N/A"}</p>
-                        <p><strong>Board:</strong> {educationDetails?._12th?.boardOrUniversity || "N/A"}</p>
+                        <p><strong>School/College:</strong> {educationDetails?._12th?.institution || "N/A"}</p>
+                        <p><strong>Board/University:</strong> {educationDetails?._12th?.boardOrUniversity || "N/A"}</p>
                         <p><strong>Marks Type:</strong> {educationDetails?._12th?.marksType && marksTypeObj[educationDetails._12th.marksType] ? marksTypeObj[educationDetails._12th.marksType] : "N/A"}</p>
                         <p><strong>Year of Passing:</strong> {educationDetails?._12th?.yearOfPassing || "N/A"}</p>
                         <p><strong>Marks:</strong> {educationDetails?._12th?.marks || "N/A"}</p>
@@ -1068,11 +1068,11 @@ export function EducationDetailsPage12Th() {
                 <Card>
                     <CardHeader>
                         <CardTitle>12th Details</CardTitle>
-                        <CardDescription>Details of your 12th grade education</CardDescription>
+                        <CardDescription>Details of your 12th/Diploma grade education</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p><strong>School:</strong> {educationDetails?._12th?.institution || "N/A"}</p>
-                        <p><strong>Board:</strong> {educationDetails?._12th?.boardOrUniversity || "N/A"}</p>
+                        <p><strong>School/College:</strong> {educationDetails?._12th?.institution || "N/A"}</p>
+                        <p><strong>Board/University:</strong> {educationDetails?._12th?.boardOrUniversity || "N/A"}</p>
                         <p><strong>Marks Type:</strong> {educationDetails?._12th?.marksType && marksTypeObj[educationDetails._12th.marksType] ? marksTypeObj[educationDetails._12th.marksType] : "N/A"}</p>
                         <p><strong>Year of Passing:</strong> {educationDetails?._12th?.yearOfPassing || "N/A"}</p>
                         <p><strong>Marks:</strong> {educationDetails?._12th?.marks || "N/A"}</p>

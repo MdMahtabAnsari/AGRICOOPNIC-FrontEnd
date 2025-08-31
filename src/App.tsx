@@ -8,6 +8,9 @@ import { SignInForm } from '@/components/pages/signin';
 
 import { NotFoundPage } from './components/pages/not-found';
 import { Layout } from '@/components/layout/layout';
+import {ApplicationPage} from '@/components/pages/application-page';
+import { ApplicationDetailsSkeleton } from '@/components/application';
+
 
 export default function App() {
   return (
@@ -16,6 +19,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Suspense fallback={<HomePageSkeleton />}><HomePage /></Suspense>} />
           <Route path="application" element={<Suspense fallback={<ApplicationFormPageSkeleton />}><ApplicationFormPage /></Suspense>} />
+          <Route path="application/details" element={<Suspense fallback={<ApplicationDetailsSkeleton />}><ApplicationPage /></Suspense>} />
           <Route path="signup" element={<SignupForm />} />
           <Route path="signin" element={<SignInForm />} />
           <Route path="*" element={<NotFoundPage />} />

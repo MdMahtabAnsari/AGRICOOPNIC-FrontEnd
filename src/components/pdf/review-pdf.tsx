@@ -377,11 +377,11 @@ export const ReviewPDFDocument = ({
         )}
         {"_12th" in educationDetails && educationDetails._12th && (
           <View style={{ marginBottom: 6 }}>
-            <Text style={styles.subheading}>12th</Text>
+            <Text style={styles.subheading}>12th/Diploma</Text>
             <View style={styles.twoColumnRow}>
               <View style={styles.column}>
-                <Text style={styles.label}>School: <Text style={styles.value}>{educationDetails._12th.institution || "N/A"}</Text></Text>
-                <Text style={styles.label}>Board: <Text style={styles.value}>{educationDetails._12th.boardOrUniversity || "N/A"}</Text></Text>
+                <Text style={styles.label}>School/College: <Text style={styles.value}>{educationDetails._12th.institution || "N/A"}</Text></Text>
+                <Text style={styles.label}>Board/University: <Text style={styles.value}>{educationDetails._12th.boardOrUniversity || "N/A"}</Text></Text>
                 <Text style={styles.label}>Stream: <Text style={styles.value}>{educationDetails._12th.subjectOrSpecialization || "N/A"}</Text></Text>
               </View>
               <View style={styles.column}>

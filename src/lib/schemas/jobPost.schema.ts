@@ -1,16 +1,8 @@
 import {z} from 'zod/v4';
+import { postNameEnum } from './common.schema';
 
 export const jobPostSchema = z.object({
-    name: z.enum([
-        'MTS',
-        'SUPERVISOR',
-        'CLERK',
-        'ASSISTANT_AGRICULTURE_OFFICER',
-        'AGRICULTURE_OFFICER',
-        'FIELD_OFFICER'
-    ], {
-        message: 'Invalid job post name'
-    }),
+    name: postNameEnum
 });
 
 export type JobPostSchema = z.infer<typeof jobPostSchema>;

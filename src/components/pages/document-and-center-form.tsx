@@ -302,7 +302,7 @@ export function DocumentAndCenterForm() {
                                                         <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
                                                         <SelectItem value="RANCHI">Ranchi</SelectItem>
                                                         <SelectItem value="PATNA">Patna</SelectItem>
-                                                        <SelectItem value="BANGLORE">Bangalore</SelectItem>
+                                                        <SelectItem value="BANGALORE">Bangalore</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -331,7 +331,7 @@ export function DocumentAndCenterForm() {
                                                         <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
                                                         <SelectItem value="RANCHI">Ranchi</SelectItem>
                                                         <SelectItem value="PATNA">Patna</SelectItem>
-                                                        <SelectItem value="BANGLORE">Bangalore</SelectItem>
+                                                        <SelectItem value="BANGALORE">Bangalore</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -361,7 +361,7 @@ export function DocumentAndCenterForm() {
                                                         <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
                                                         <SelectItem value="RANCHI">Ranchi</SelectItem>
                                                         <SelectItem value="PATNA">Patna</SelectItem>
-                                                        <SelectItem value="BANGLORE">Bangalore</SelectItem>
+                                                        <SelectItem value="BANGALORE">Bangalore</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>

@@ -2,20 +2,20 @@
 import { Button } from '@/components/ui/button';
 import { Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isUserLoggedIn } from '@/lib/api/auth';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getFormStatus } from '@/lib/api/formSubmit';
+import { useCallback } from 'react';
 
 export const HomePage = () => {
   const navigate = useNavigate();
   const [userLoggedInStatus, setUserLoggedInStatus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
 
-  useEffect(() => {
-    checkUserLoggedIn();
-  }, []);
 
-  const checkUserLoggedIn = async () => {
+  const checkUserLoggedIn = useCallback(async () => {
     setLoading(true);
     const response = await isUserLoggedIn();
     if (response.status === "success") {
@@ -24,15 +24,35 @@ export const HomePage = () => {
       setUserLoggedInStatus(false);
     }
     setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    checkUserLoggedIn();
+  }, [checkUserLoggedIn]);
+
 
   const handleApplyClick = () => {
-    if (userLoggedInStatus) {
+    if (userLoggedInStatus && formSubmitted) {
+      navigate('/application/details');
+    } else if (userLoggedInStatus) {
       navigate('/application');
     } else {
       navigate('/signin');
     }
   };
+
+  const fetchFormStatus = useCallback(async () => {
+    const response = await getFormStatus();
+    if (response.status === "success") {
+      setFormSubmitted(true);
+    } else {
+      setFormSubmitted(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFormStatus();
+  }, [fetchFormStatus]);
 
   if (loading) {
     return <HomePageSkeleton />;
@@ -51,7 +71,7 @@ export const HomePage = () => {
             className='cursor-pointer'
             onClick={handleApplyClick}
           >
-            {userLoggedInStatus ? "Apply Now" : "Sign In to Apply"}
+            {userLoggedInStatus && formSubmitted ? "View Application" : userLoggedInStatus ? "Apply Now" : "Sign In to Apply"}
             <Briefcase className="ml-2 h-4 w-4 inline-block" />
           </Button>
         </div>

@@ -17,7 +17,12 @@ html, body {
   height: 100%;
 }
 
-
+@media print {
+  html, body {
+    height: initial !important;
+    overflow: initial !important;
+  }
+}
 
 @custom-variant dark (&:is(.dark *));
 :root {

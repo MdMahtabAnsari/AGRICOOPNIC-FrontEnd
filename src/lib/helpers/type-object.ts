@@ -28,11 +28,37 @@ export const preferenceObj = {
     'BHUBANESWAR': 'Bhubaneswar',
     'RANCHI': 'Ranchi',
     'PATNA': 'Patna',
-    'BANGLORE': 'Bangalore'
+    'BANGALORE': 'Bangalore'
 }
 
 export const genderObj = {
     "MALE": "Male",
     "FEMALE": "Female",
     "OTHER": "Other"
+}
+
+export const preferenceRankObj ={
+    "PREFERENCE_1": "1st Preference",
+    "PREFERENCE_2": "2nd Preference",
+    "PREFERENCE_3": "3rd Preference"
+}
+
+export const qualificationObj ={
+    "MATRICULATION": "Matriculation",
+    "INTERMEDIATE_OR_DIPLOMA": "Intermediate or Diploma",
+    "GRADUATION": "Graduation",
+}
+
+
+export const paymentStatusObj = {
+    "PENDING": "Pending",
+    "COMPLETED": "Completed",
+    "FAILED": "Failed",
+    "CANCELLED": "Cancelled",
+    "REFUNDED": "Refunded"
+}
+
+export const addressTypeObj = {
+    "PERMANENT": "Permanent",
+    "CORRESPONDENCE": "Correspondence"
 }

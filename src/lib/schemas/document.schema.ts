@@ -1,11 +1,9 @@
 import {z} from 'zod/v4';
 
-
+import { documentTypeEnum } from './common.schema';
 
 export const documentSchema = z.object({
-    documentType: z.enum(['PHOTO', 'SIGNATURE', 'AADHAAR_FRONT', 'AADHAAR_BACK'], {
-        error: 'Invalid document type'
-    }),
+    documentType: documentTypeEnum,
     url: z.url({ error: 'Invalid URL format' }),
 });
 

@@ -12,6 +12,8 @@ import { signIn } from "@/lib/api/auth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
+import { isUserLoggedIn } from "@/lib/api/auth"
+import { useEffect } from "react";
 
 
 export const SignInForm = () => {
@@ -36,6 +38,17 @@ export const SignInForm = () => {
             toast.error(response.message || "Sign In failed");
         }
     }, [navigate]);
+
+    const checkUserLoggedIn = useCallback(async () => {
+        const response = await isUserLoggedIn();
+        if (response.status === "success") {
+            navigate("/");
+        }
+    }, [navigate]);
+
+    useEffect(() => {
+        checkUserLoggedIn();
+    }, [checkUserLoggedIn]);
 
     return (
         <Card className="w-full h-full border-none">
