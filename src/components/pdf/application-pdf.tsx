@@ -6,10 +6,10 @@ import {
     StyleSheet,
     Image,
     Font,
+    Link
 } from "@react-pdf/renderer";
-import { format } from "date-fns";
 
-import { jobPostObj, categoryObj, genderObj, preferenceObj, marksTypeObj, preferenceRankObj } from "@/lib/helpers/type-object";
+import { jobPostObj, categoryObj, genderObj, preferenceObj, marksTypeObj, preferenceRankObj, paymentStatusObj } from "@/lib/helpers/type-object";
 import type { ApplicationSchema } from "@/lib/schemas/application.schema";
 
 // Register emoji fallback
@@ -258,6 +258,20 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
     },
+    paymentContainer: {
+        backgroundColor: "#f9fafb",
+        border: "1px solid #d1d5db",
+        borderRadius: 6,
+        padding: 10,
+        marginBottom: 10,
+    },
+    submissionContainer: {
+        backgroundColor: "#f9fafb",
+        border: "1px solid #d1d5db",
+        borderRadius: 6,
+        padding: 10,
+        marginBottom: 10,
+    },
 });
 
 export const ApplicationPDF = ({
@@ -266,7 +280,7 @@ export const ApplicationPDF = ({
     data: ApplicationSchema;
 }) => (
     <Document>
-        {/* Single Page with all content */}
+        {/* First Page: Basic Info, Family, Exam Centers, Education */}
         <Page size="A4" style={styles.page}>
             {/* Header */}
             <View style={styles.header}>
@@ -343,21 +357,22 @@ export const ApplicationPDF = ({
             {/* Exam Center - Compact */}
             <View style={styles.compactSection}>
                 <Text style={styles.sectionHeader}>Exam Centers</Text>
-                {data.examinationPreferences.sort((a, b) => a.preferenceType.localeCompare(b.preferenceType)).map(pref => (
-                    <View key={pref.id}>
-                        <Text style={styles.label}>{preferenceRankObj[pref.preferenceType]} <Text style={styles.value}>{preferenceObj[pref.examCenterName]}</Text></Text>
-                    </View>
-                ))}
+                {data.examinationPreferences
+                    .sort((a, b) => a.preferenceType.localeCompare(b.preferenceType))
+                    .map(pref => (
+                        <View key={pref.id}>
+                            <Text style={styles.label}>{preferenceRankObj[pref.preferenceType]} <Text style={styles.value}>{preferenceObj[pref.examCenterName]}</Text></Text>
+                        </View>
+                    ))}
             </View>
 
             {/* Education - Compact */}
             <View style={styles.compactSection}>
                 <Text style={styles.sectionHeader}>Educational Qualifications</Text>
-                {/* Render 10th, 12th, Graduation details separately to avoid union type issues */}
-                {data.education.map((educationDetails) => (
-                    <>
-                        {educationDetails.qualification === "MATRICULATION" && (
-                            <View key={educationDetails.qualification + educationDetails.yearOfPassing} style={{ marginBottom: 6 }}>
+                {data.education.map((educationDetails) => {
+                    if (educationDetails.qualification === "MATRICULATION") {
+                        return (
+                            <View key={educationDetails.id} style={{ marginBottom: 6 }}>
                                 <Text style={styles.subheading}>10th</Text>
                                 <View style={styles.twoColumnRow}>
                                     <View style={styles.column}>
@@ -371,59 +386,94 @@ export const ApplicationPDF = ({
                                     </View>
                                 </View>
                             </View>
-                        )}
-                        {
-                            educationDetails.qualification === "INTERMEDIATE_OR_DIPLOMA" && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={styles.subheading}>12th/Diploma</Text>
-                                    <View style={styles.twoColumnRow}>
-                                        <View style={styles.column}>
-                                            <Text style={styles.label}>School/College: <Text style={styles.value}>{educationDetails.institution}</Text></Text>
-                                            <Text style={styles.label}>Board/University: <Text style={styles.value}>{educationDetails.boardOrUniversity}</Text></Text>
-                                            <Text style={styles.label}>Stream: <Text style={styles.value}>{educationDetails.subjectOrSpecialization}</Text></Text>
-                                        </View>
-                                        <View style={styles.column}>
-                                            <Text style={styles.label}>Marks Type: <Text style={styles.value}>{marksTypeObj[educationDetails.marksType]}</Text></Text>
-                                            <Text style={styles.label}>Marks: <Text style={styles.value}>{educationDetails.marks}</Text></Text>
-                                            <Text style={styles.label}>Year: <Text style={styles.value}>{educationDetails.yearOfPassing}</Text></Text>
-                                        </View>
+                        );
+                    }
+                    if (educationDetails.qualification === "INTERMEDIATE_OR_DIPLOMA") {
+                        return (
+                            <View key={educationDetails.id} style={{ marginBottom: 6 }}>
+                                <Text style={styles.subheading}>12th/Diploma</Text>
+                                <View style={styles.twoColumnRow}>
+                                    <View style={styles.column}>
+                                        <Text style={styles.label}>School/College: <Text style={styles.value}>{educationDetails.institution}</Text></Text>
+                                        <Text style={styles.label}>Board/University: <Text style={styles.value}>{educationDetails.boardOrUniversity}</Text></Text>
+                                        <Text style={styles.label}>Stream: <Text style={styles.value}>{educationDetails.subjectOrSpecialization}</Text></Text>
+                                    </View>
+                                    <View style={styles.column}>
+                                        <Text style={styles.label}>Marks Type: <Text style={styles.value}>{marksTypeObj[educationDetails.marksType]}</Text></Text>
+                                        <Text style={styles.label}>Marks: <Text style={styles.value}>{educationDetails.marks}</Text></Text>
+                                        <Text style={styles.label}>Year: <Text style={styles.value}>{educationDetails.yearOfPassing}</Text></Text>
                                     </View>
                                 </View>
-                            )
-                        }
-                        {
-                            educationDetails.qualification === "GRADUATION" && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={styles.subheading}>Graduation</Text>
-                                    <View style={styles.twoColumnRow}>
-                                        <View style={styles.column}>
-                                            <Text style={styles.label}>College: <Text style={styles.value}>{educationDetails.institution}</Text></Text>
-                                            <Text style={styles.label}>University: <Text style={styles.value}>{educationDetails.boardOrUniversity}</Text></Text>
-                                            <Text style={styles.label}>Specialization: <Text style={styles.value}>{educationDetails.subjectOrSpecialization}</Text></Text>
-                                        </View>
-                                        <View style={styles.column}>
-                                            <Text style={styles.label}>Marks Type: <Text style={styles.value}>{marksTypeObj[educationDetails.marksType]}</Text></Text>
-                                            <Text style={styles.label}>Marks: <Text style={styles.value}>{educationDetails.marks}</Text></Text>
-                                            <Text style={styles.label}>Year: <Text style={styles.value}>{educationDetails.yearOfPassing}</Text></Text>
-                                        </View>
+                            </View>
+                        );
+                    }
+                    if (educationDetails.qualification === "GRADUATION") {
+                        return (
+                            <View key={educationDetails.id} style={{ marginBottom: 6 }}>
+                                <Text style={styles.subheading}>Graduation</Text>
+                                <View style={styles.twoColumnRow}>
+                                    <View style={styles.column}>
+                                        <Text style={styles.label}>College: <Text style={styles.value}>{educationDetails.institution}</Text></Text>
+                                        <Text style={styles.label}>University: <Text style={styles.value}>{educationDetails.boardOrUniversity}</Text></Text>
+                                        <Text style={styles.label}>Specialization: <Text style={styles.value}>{educationDetails.subjectOrSpecialization}</Text></Text>
+                                    </View>
+                                    <View style={styles.column}>
+                                        <Text style={styles.label}>Marks Type: <Text style={styles.value}>{marksTypeObj[educationDetails.marksType]}</Text></Text>
+                                        <Text style={styles.label}>Marks: <Text style={styles.value}>{educationDetails.marks}</Text></Text>
+                                        <Text style={styles.label}>Year: <Text style={styles.value}>{educationDetails.yearOfPassing}</Text></Text>
                                     </View>
                                 </View>
-                            )
-                        }
-                    </>
-                ))}
+                            </View>
+                        );
+                    }
+                    return null;
+                })}
             </View>
         </Page>
 
         {/* Second Page: Documents (70%) + Footer (20%) */}
         <Page size="A4" style={styles.documentsPage}>
+            {/* payment Container */}
+            <View key={data.payment.id} style={styles.paymentContainer}>
+                <Text style={styles.sectionHeader}>💳 Payment Details</Text>
+                <View style={styles.twoColumnRow}>
+                    <View style={styles.column}>
+                        <Text style={styles.label}>Order ID: <Text style={styles.value}>{data.payment.orderId}</Text></Text>
+                        <Text style={styles.label}>Payment ID: <Text style={styles.value}>{data.payment.paymentId}</Text></Text>
+                        <Text style={styles.label}>Payment Date & Time: <Text style={styles.value}>{new Date(data.payment.createdAt).toLocaleTimeString(
+                            "en-IN",
+                            {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                                formatMatcher: 'best fit'
+                            }
+                        )}</Text></Text>
+                    </View>
+                    <View style={styles.column}>
+                        <Text style={styles.label}>Total Amount (in Rupees): <Text style={styles.value}>{data.payment.amount}</Text></Text>
+                        <Text style={styles.label}>Payment Status: <Text style={styles.value}>{paymentStatusObj[data.payment.paymentStatus]}</Text></Text>
+                    </View>
+                </View>
+            </View>
+            {/* submission Container */}
+            <View style={styles.submissionContainer}>
+                <Text style={styles.sectionHeader}>📋 Application Summary</Text>
+                <Text style={styles.label}>Submitted on: <Text style={styles.value}>{new Date(data.formSubmitted.submissionDate).toLocaleTimeString("en-IN", {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    formatMatcher: 'best fit'
+                })}</Text></Text>
+                <Text style={styles.label}>Application Status: <Text style={styles.value}>{data.formSubmitted.status ? "Submitted" : "Not Submitted"}</Text></Text>
+            </View>
             {/* Documents Container - Exactly 70% of page */}
             <View style={styles.documentsContainer}>
                 <Text style={styles.sectionHeader}>📄 Uploaded Documents</Text>
 
                 {/* Documents Grid - 2 columns, flex-wrap */}
                 <View style={styles.documentsGrid}>
-                    {(data.documents).map((document) => {
+                    {data.documents.map((document) => {
                         const url = document.url;
                         const label = document.documentType;
 
@@ -442,22 +492,13 @@ export const ApplicationPDF = ({
                         return (
                             <View key={document.id} style={styles.documentItem}>
                                 <Text style={styles.documentLabel}>{label}</Text>
-                                <Image src={url} style={styles.image} />
+                                <Link src={url} style={{ textDecoration: "none" }}>
+                                    <Image src={url} style={styles.image} />
+                                </Link>
                             </View>
                         );
                     })}
                 </View>
-            </View>
-
-            {/* Footer - Exactly 20% of page */}
-            <View style={styles.footer}>
-                <Text style={styles.footerTitle}>📋 Application Summary Complete</Text>
-                <Text style={styles.footerText}>
-                    Generated on {format(new Date(), "dd MMMM yyyy 'at' hh:mm a")}
-                </Text>
-                <Text style={styles.footerSubtext}>
-                    This is a system generated document | Please verify all information
-                </Text>
             </View>
         </Page>
     </Document>
