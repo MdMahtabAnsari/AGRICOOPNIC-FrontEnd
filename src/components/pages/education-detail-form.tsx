@@ -978,7 +978,7 @@ export function EducationDetailForm() {
     if (basicInfo?.jobPost.name === 'MTS') {
         return <EducationDetailForm10Th />;
     }
-    else if (basicInfo?.jobPost.name === "SUPERVISOR" || basicInfo?.jobPost.name === "CLERK" || basicInfo?.jobPost.name === "FIELD_OFFICER") {
+    else if (basicInfo?.jobPost.name === "SUPERVISOR" || basicInfo?.jobPost.name === "CLERK") {
         return <EducationDetailForm12Th />;
     }
     else {
@@ -1118,7 +1118,7 @@ export function EducationDetailsPage(){
     if (basicInfo?.jobPost.name === 'MTS') {
         return <EducationDetailsPage10Th />;
     }
-    else if (basicInfo?.jobPost.name === "SUPERVISOR" || basicInfo?.jobPost.name === "CLERK" || basicInfo?.jobPost.name === "FIELD_OFFICER") {
+    else if (basicInfo?.jobPost.name === "SUPERVISOR" || basicInfo?.jobPost.name === "CLERK") {
         return <EducationDetailsPage12Th />;
     }
     else {

@@ -284,7 +284,7 @@ export const ApplicationPDF = ({
         <Page size="A4" style={styles.page}>
             {/* Header */}
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>📄 Application Documents</Text>
+                <Text style={styles.headerTitle}>AGRICOOPNIC</Text>
             </View>
 
             {/* Basic Info - Compact */}
@@ -361,7 +361,7 @@ export const ApplicationPDF = ({
                     .sort((a, b) => a.preferenceType.localeCompare(b.preferenceType))
                     .map(pref => (
                         <View key={pref.id}>
-                            <Text style={styles.label}>{preferenceRankObj[pref.preferenceType]} <Text style={styles.value}>{preferenceObj[pref.examCenterName]}</Text></Text>
+                            <Text style={styles.label}>{preferenceRankObj[pref.preferenceType]}: <Text style={styles.value}>{preferenceObj[pref.examCenterName]}</Text></Text>
                         </View>
                     ))}
             </View>
@@ -435,7 +435,7 @@ export const ApplicationPDF = ({
         <Page size="A4" style={styles.documentsPage}>
             {/* payment Container */}
             <View key={data.payment.id} style={styles.paymentContainer}>
-                <Text style={styles.sectionHeader}>💳 Payment Details</Text>
+                <Text style={styles.sectionHeader}>Payment Details</Text>
                 <View style={styles.twoColumnRow}>
                     <View style={styles.column}>
                         <Text style={styles.label}>Order ID: <Text style={styles.value}>{data.payment.orderId}</Text></Text>
@@ -458,7 +458,7 @@ export const ApplicationPDF = ({
             </View>
             {/* submission Container */}
             <View style={styles.submissionContainer}>
-                <Text style={styles.sectionHeader}>📋 Application Summary</Text>
+                <Text style={styles.sectionHeader}>Application Summary</Text>
                 <Text style={styles.label}>Submitted on: <Text style={styles.value}>{new Date(data.formSubmitted.submissionDate).toLocaleTimeString("en-IN", {
                     day: 'numeric',
                     month: 'long',
@@ -469,7 +469,7 @@ export const ApplicationPDF = ({
             </View>
             {/* Documents Container - Exactly 70% of page */}
             <View style={styles.documentsContainer}>
-                <Text style={styles.sectionHeader}>📄 Uploaded Documents</Text>
+                <Text style={styles.sectionHeader}>Uploaded Documents</Text>
 
                 {/* Documents Grid - 2 columns, flex-wrap */}
                 <View style={styles.documentsGrid}>

@@ -9,12 +9,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 import { signUpSchema } from "@/lib/schemas/auth.shema";
 import type { SignUpSchema } from "@/lib/schemas/auth.shema";
-import { emailObject,userIdObject } from "@/lib/schemas/common.schema";
+import { emailObject, userIdObject } from "@/lib/schemas/common.schema";
 import { signup, checkUserAvailability } from "@/lib/api/auth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { isUserLoggedIn } from "@/lib/api/auth"
+import { Link } from "react-router-dom";
 
 
 export const SignupForm = () => {
@@ -54,15 +55,15 @@ export const SignupForm = () => {
     }, [email, debouncedEmailCheck]);
 
     const checkUserLoggedIn = useCallback(async () => {
-            const response = await isUserLoggedIn();
-            if (response.status === "success") {
-                navigate("/");
-            }
-        }, [navigate]);
-    
-        useEffect(() => {
-            checkUserLoggedIn();
-        }, [checkUserLoggedIn]);
+        const response = await isUserLoggedIn();
+        if (response.status === "success") {
+            navigate("/");
+        }
+    }, [navigate]);
+
+    useEffect(() => {
+        checkUserLoggedIn();
+    }, [checkUserLoggedIn]);
 
 
     const isUserIdAvailable = useCallback(async (userId: string) => {
@@ -79,7 +80,6 @@ export const SignupForm = () => {
             }
             else {
                 setIsUserIdExists(false);
-                toast.success("User ID is available");
             }
 
         }
@@ -104,7 +104,6 @@ export const SignupForm = () => {
             }
             else {
                 setIsEmailExists(false);
-                toast.success("Email is available");
             }
 
         }
@@ -163,7 +162,7 @@ export const SignupForm = () => {
                                         </FormItem>
                                     )}
                                 />
-                                
+
                                 <FormField
                                     control={form.control}
                                     name="email"
@@ -197,8 +196,13 @@ export const SignupForm = () => {
                             </form>
                         </Form>
                     </CardContent>
-                    <CardFooter className="flex justify-between">
-                        <Button variant="link" onClick={() => navigate("/signin")} className="cursor-pointer">Already have an account? Sign In</Button>
+                    <CardFooter className="flex flex-col items-center justify-center">
+
+                        <Link to="/signin">
+                            <Button variant="link" className="cursor-pointer">
+                                Already have an account? Sign In
+                            </Button>
+                        </Link>
                     </CardFooter>
                 </Card>
 

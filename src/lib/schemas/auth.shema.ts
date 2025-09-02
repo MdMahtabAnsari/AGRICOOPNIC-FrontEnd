@@ -27,3 +27,16 @@ export const userIdEmailObjectWithOptional = z.object({
 });
 
 export type UserIdEmailObjectWithOptional = z.infer<typeof userIdEmailObjectWithOptional>;
+
+export const emailPasswordSchema = z.object({
+    email: email,
+    password: password
+});
+
+export type EmailPasswordSchema = z.infer<typeof emailPasswordSchema>;
+
+export const passwordObject = z.object({
+    password: password,
+});
+
+export type PasswordObject = z.infer<typeof passwordObject>;

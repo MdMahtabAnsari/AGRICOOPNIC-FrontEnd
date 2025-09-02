@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardDescription, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
-import { Suspense, useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { BasicInformationPage } from "@/components/pages/basic-information";
 import { FamilyAndAddressPage } from "@/components/pages/family-address-form";
@@ -10,7 +10,6 @@ import { useEducationDetailsStore10Th, useEducationDetailsStore12Th, useEducatio
 import { useFamilyAndAddressStore } from "@/store/family-address-store";
 import { useDocumentAndCenterStore } from "@/store/document-and-center-store";
 import { useFormStepStore } from "@/store/form-step-store";
-import { DownloadPDFButton, DownloadPDFButtonSkeleton } from "@/components/pdf/download-button";
 import { createBasicInformation } from "@/lib/api/group/basic-information";
 import { createFamilyAndAddress } from "@/lib/api/group/family-and-address";
 import { createEducationDetails } from "@/lib/api/group/education-detail";
@@ -24,6 +23,7 @@ import { deleteUser } from "@/lib/api/user";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getFormStatus } from "@/lib/api/formSubmit"
 import { getFees } from "@/lib/api/fees";
+import { useNavigate } from "react-router-dom";
 import type { RazorpayResponse } from "@/providers/payment-provider";
 export function ReviewPage() {
     const basicInformation = useBasicInformationStore((state) => state.basicInformation);
@@ -39,6 +39,7 @@ export function ReviewPage() {
     const [successfulSubmission, setSuccessfulSubmission] = useState<boolean>(false);
     const [fees, setFees] = useState<number | null>(null);
 
+    const navigate = useNavigate();
 
     const fetchSuccessfulPayment = useCallback(async () => {
         setPaymentLoading(true);
@@ -79,15 +80,15 @@ export function ReviewPage() {
     }, [fetchSuccessfulPayment]);
 
     const handleSubmit = useCallback(async () => {
-        const educationDetails = basicInformation?.jobPost.name === "MTS" ? educationDetails10Th : (basicInformation?.jobPost.name === "SUPERVISOR" || basicInformation?.jobPost.name === "CLERK" || basicInformation?.jobPost.name === "FIELD_OFFICER") ? educationDetails12Th : educationDetailsGraduation;
+        const educationDetails = basicInformation?.jobPost.name === "MTS" ? educationDetails10Th : (basicInformation?.jobPost.name === "SUPERVISOR" || basicInformation?.jobPost.name === "CLERK") ? educationDetails12Th : educationDetailsGraduation;
         if (!basicInformation || !educationDetails || !documentAndCenter || !familyAndAddress) {
             return;
         }
         setSuccessfulSubmission(false);
         setPrevDisabled(true);
         setLoading(true);
-        const basicInfoResult = await createBasicInformation(basicInformation);
-        const [educationResult, documentResult, familyResult] = await Promise.all([
+        await createBasicInformation(basicInformation);
+        await Promise.all([
             createEducationDetails(educationDetails),
             createDocumentAndCenter(documentAndCenter),
             createFamilyAndAddress(familyAndAddress)
@@ -103,14 +104,8 @@ export function ReviewPage() {
         setSuccessfulSubmission(true);
         setLoading(false);
         setPrevDisabled(false);
-        return {
-            basicInfoResult,
-            educationResult,
-            documentResult,
-            familyResult,
-            formSubmitInfo
-        }
-    }, [basicInformation, educationDetails10Th, educationDetails12Th, educationDetailsGraduation, documentAndCenter, familyAndAddress, setPrevDisabled]);
+        navigate("/application/details")
+    }, [basicInformation, educationDetails10Th, educationDetails12Th, educationDetailsGraduation, documentAndCenter, familyAndAddress, setPrevDisabled, navigate]);
 
     const handlePayment = useCallback(async () => {
         setIsPaymentSuccessful(false);
@@ -183,11 +178,6 @@ export function ReviewPage() {
                 <DocumentAndCenterPage />
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-                {isPaymentSuccessful && successfulSubmission && (
-                    <Suspense fallback={<DownloadPDFButtonSkeleton />}>
-                        <DownloadPDFButton />
-                    </Suspense>
-                )}
                 {isPaymentSuccessful && !successfulSubmission && !paymentLoading && (
                     <Button onClick={handleSubmit} disabled={loading} className="w-full cursor-pointer">
                         {loading ? <Loader className="animate-spin" /> : "Submit"}

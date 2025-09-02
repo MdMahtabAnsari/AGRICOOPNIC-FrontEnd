@@ -1,5 +1,6 @@
 import api from "@/lib/api/api";
 import type { ApiResponseSchema } from "@/lib/schemas/api-response/api-response";
+import type { EmailOtpSchema } from "@/lib/schemas/otp.schema";
 import { AxiosError } from "axios";
 
 export const requestOtp = async (email: string): Promise<ApiResponseSchema> => {
@@ -21,9 +22,9 @@ export const requestOtp = async (email: string): Promise<ApiResponseSchema> => {
   
 }
 
-export const verifyOtp = async (email: string, otp: string): Promise<ApiResponseSchema> => {
+export const verifyOtp = async (data: EmailOtpSchema): Promise<ApiResponseSchema> => {
   try {
-    const response = await api.post("/api/otp/verify", { email, otp });
+    const response = await api.post("/api/otp/verify", data);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {

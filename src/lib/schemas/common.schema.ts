@@ -24,6 +24,8 @@ export const genderEnum = z.enum(['MALE', 'FEMALE', 'OTHER'], {message: 'Invalid
 
 export const addressTypeEnum = z.enum(['PERMANENT', 'CORRESPONDENCE'], {message: 'Invalid address type'})
 
+
+
 export const qualificationEnum = z.enum(['MATRICULATION', 'INTERMEDIATE_OR_DIPLOMA', 'GRADUATION'], {error: 'Invalid education level'})
 
 export const marksTypeEnum = z.enum(['PERCENTAGE', 'CGPA'], {error: 'Invalid marks type'})
@@ -31,9 +33,8 @@ export const marksTypeEnum = z.enum(['PERCENTAGE', 'CGPA'], {error: 'Invalid mar
 export const documentTypeEnum = z.enum(['PHOTO', 'SIGNATURE', 'AADHAAR_FRONT', 'AADHAAR_BACK'], {error: 'Invalid document type'})
 
 export const preferenceTypeEnum = z.enum(['PREFERENCE_1', 'PREFERENCE_2', 'PREFERENCE_3'], {message: 'Invalid preference location'})
-
 export const examCenterNameEnum =z.enum(['DELHI_NCR','LUCKNOW','AHMEDABAD','BHOPAL','MUMBAI','KOLKATA','BHUBANESWAR','RANCHI','PATNA','BANGALORE'], {message: 'Invalid exam center name'})
-
+export type ExamCenterNameEnum = z.infer<typeof examCenterNameEnum>;
 export const postNameEnum =  z.enum(['MTS','SUPERVISOR','CLERK','ASSISTANT_AGRICULTURE_OFFICER','AGRICULTURE_OFFICER','FIELD_OFFICER'], {message: 'Invalid job post name'})
 
 

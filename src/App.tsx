@@ -12,6 +12,7 @@ import { NotFoundPage } from '@/components/pages/not-found';
 import { Layout } from '@/components/layout/layout';
 import { TermsAndConditionsPage } from '@/components/pages/terms-and-conditions';
 import { RefundPolicyPage } from '@/components/pages/refund-policy';
+import { ForgotPasswordPage } from '@/components/pages/forgot-password';
 import {ApplicationPage} from '@/components/pages/application-page';
 import { ApplicationDetailsSkeleton } from '@/components/application';
 import { ShippingAndDeliveryPolicyPage } from '@/components/pages/shippind-and-delivery-policy';
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="shipping-and-delivery-policy" element={<ShippingAndDeliveryPolicyPage />} />
           <Route path="signup" element={<SignupForm />} />
           <Route path="signin" element={<SignInForm />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

@@ -37,6 +37,7 @@ import { useFormStepStore } from "@/store/form-step-store.ts";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { preferenceObj } from "@/lib/helpers/type-object";
+import type { ExamCenterNameEnum } from "@/lib/schemas/common.schema"
 
 
 export function DocumentAndCenterForm() {
@@ -45,6 +46,9 @@ export function DocumentAndCenterForm() {
     const setDocumentAndCenter = useDocumentAndCenterStore((state) => state.setDocumentAndCenter);
     const setDisabled = useFormStepStore((state) => state.setDisabled);
     const disabled = useFormStepStore((state) => state.disabled);
+    const [pref1, setPref1] = useState<ExamCenterNameEnum | undefined>(undefined);
+    const [pref2, setPref2] = useState<ExamCenterNameEnum | undefined>(undefined);
+    const [pref3, setPref3] = useState<ExamCenterNameEnum | undefined>(undefined);
 
     const form = useForm<DocumentAndCenterSchema>({
         resolver: zodResolver(documentAndCenterSchema),
@@ -55,7 +59,7 @@ export function DocumentAndCenterForm() {
             aadhaarBack: { documentType: 'AADHAAR_BACK', url: undefined },
             preference1: { preferenceType: 'PREFERENCE_1', examCenterName: undefined },
             preference2: { preferenceType: 'PREFERENCE_2', examCenterName: undefined },
-            preference3: { preferenceType: 'PREFERENCE_3', examCenterName: undefined}
+            preference3: { preferenceType: 'PREFERENCE_3', examCenterName: undefined }
         },
         mode: 'onChange',
     });
@@ -87,7 +91,7 @@ export function DocumentAndCenterForm() {
             documentAndCenter.preference1.preferenceType !== preference1Type ||
             documentAndCenter.preference1.examCenterName !== preference1Center ||
             documentAndCenter.preference2.preferenceType !== preference2Type ||
-            documentAndCenter.preference2.examCenterName !== preference2Center||
+            documentAndCenter.preference2.examCenterName !== preference2Center ||
             documentAndCenter.preference3.preferenceType !== preference3Type ||
             documentAndCenter.preference3.examCenterName !== preference3Center
         )) {
@@ -109,7 +113,17 @@ export function DocumentAndCenterForm() {
     }, []);
 
 
+    useEffect(() => {
+        setPref1(preference1Center);
+    }, [form, preference1Center]);
 
+    useEffect(() => {
+        setPref2(preference2Center);
+    }, [form, preference2Center]);
+
+    useEffect(() => {
+        setPref3(preference3Center);
+    }, [form, preference3Center]);
 
     const onSubmit = (data: DocumentAndCenterSchema) => {
         setDocumentAndCenter(data);
@@ -293,16 +307,13 @@ export function DocumentAndCenterForm() {
                                                         <SelectValue placeholder="Select Exam Center" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="DELHI_NCR">Delhi NCR</SelectItem>
-                                                        <SelectItem value="LUCKNOW">Lucknow</SelectItem>
-                                                        <SelectItem value="AHMEDABAD">Ahmedabad</SelectItem>
-                                                        <SelectItem value="BHOPAL">Bhopal</SelectItem>
-                                                        <SelectItem value="MUMBAI">Mumbai</SelectItem>
-                                                        <SelectItem value="KOLKATA">Kolkata</SelectItem>
-                                                        <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
-                                                        <SelectItem value="RANCHI">Ranchi</SelectItem>
-                                                        <SelectItem value="PATNA">Patna</SelectItem>
-                                                        <SelectItem value="BANGALORE">Bangalore</SelectItem>
+                                                        {Object.entries(preferenceObj).map(([key, value]) =>
+                                                            (key !== pref2 && key !== pref3) ? (
+                                                                <SelectItem key={key} value={key}>
+                                                                    {value}
+                                                                </SelectItem>
+                                                            ) : null
+                                                        )}
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -322,16 +333,13 @@ export function DocumentAndCenterForm() {
                                                         <SelectValue placeholder="Select Exam Center" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="DELHI_NCR">Delhi NCR</SelectItem>
-                                                        <SelectItem value="LUCKNOW">Lucknow</SelectItem>
-                                                        <SelectItem value="AHMEDABAD">Ahmedabad</SelectItem>
-                                                        <SelectItem value="BHOPAL">Bhopal</SelectItem>
-                                                        <SelectItem value="MUMBAI">Mumbai</SelectItem>
-                                                        <SelectItem value="KOLKATA">Kolkata</SelectItem>
-                                                        <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
-                                                        <SelectItem value="RANCHI">Ranchi</SelectItem>
-                                                        <SelectItem value="PATNA">Patna</SelectItem>
-                                                        <SelectItem value="BANGALORE">Bangalore</SelectItem>
+                                                        {Object.entries(preferenceObj).map(([key, value]) =>
+                                                            (key !== pref1 && key !== pref3) ? (
+                                                                <SelectItem key={key} value={key}>
+                                                                    {value}
+                                                                </SelectItem>
+                                                            ) : null
+                                                        )}
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -352,16 +360,13 @@ export function DocumentAndCenterForm() {
                                                         <SelectValue placeholder="Select Exam Center" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="DELHI_NCR">Delhi NCR</SelectItem>
-                                                        <SelectItem value="LUCKNOW">Lucknow</SelectItem>
-                                                        <SelectItem value="AHMEDABAD">Ahmedabad</SelectItem>
-                                                        <SelectItem value="BHOPAL">Bhopal</SelectItem>
-                                                        <SelectItem value="MUMBAI">Mumbai</SelectItem>
-                                                        <SelectItem value="KOLKATA">Kolkata</SelectItem>
-                                                        <SelectItem value="BHUBANESWAR">Bhubaneswar</SelectItem>
-                                                        <SelectItem value="RANCHI">Ranchi</SelectItem>
-                                                        <SelectItem value="PATNA">Patna</SelectItem>
-                                                        <SelectItem value="BANGALORE">Bangalore</SelectItem>
+                                                        {Object.entries(preferenceObj).map(([key, value]) =>
+                                                            (key !== pref2 && key !== pref1) ? (
+                                                                <SelectItem key={key} value={key}>
+                                                                    {value}
+                                                                </SelectItem>
+                                                            ) : null
+                                                        )}
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>

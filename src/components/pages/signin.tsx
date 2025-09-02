@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { isUserLoggedIn } from "@/lib/api/auth"
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 
 export const SignInForm = () => {
@@ -94,8 +95,18 @@ export const SignInForm = () => {
                             </form>
                         </Form>
                     </CardContent>
-                    <CardFooter className="flex justify-between">
-                        <Button variant="link" onClick={() => navigate("/signup")} className="cursor-pointer background-transparent">Don't have an account? Sign Up</Button>
+                    <CardFooter className="flex flex-col items-center justify-center">
+
+                        <Link to="/signup">
+                            <Button variant="link" className="cursor-pointer">
+                                Don't have an account? Sign Up
+                            </Button>
+                        </Link>
+                        <Link to='/forgot-password'>
+                            <Button variant="link" className="cursor-pointer">
+                                Forgot Password?
+                            </Button>
+                        </Link>
                     </CardFooter>
                 </Card>
 

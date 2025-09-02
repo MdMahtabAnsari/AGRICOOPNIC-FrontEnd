@@ -26,11 +26,11 @@ export function ApplicationDetails({ data }: Props) {
                 <div ref={printRef}>
                     <CardHeader className="text-center space-y-2">
                         <CardTitle className="text-2xl font-bold">Application Details</CardTitle>
-                        <Badge variant="outline" className="px-3 py-1 text-base">
-                            {jobPostObj[data.jobPost.name]}
-                        </Badge>
                         <p className="text-sm text-muted-foreground">
                             Application No: <span className="font-semibold">{data.jobPost.applicationNo}</span>
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                            Post: <span className="font-semibold">{jobPostObj[data.jobPost.name]}</span>
                         </p>
 
 
@@ -55,6 +55,7 @@ export function ApplicationDetails({ data }: Props) {
                                     }
                                 )} />
                                 <Field label="Nationality" value={data.personalDetail.nationality} />
+                               
                             </Grid>
                         </Section>
 

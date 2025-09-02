@@ -232,7 +232,7 @@ export function BasicInformationForm() {
 
 
     const handleVerifyOtp = useCallback(async () => {
-        const response = await verifyOtp(email, otp);
+        const response = await verifyOtp({ email, otp });
         if (response.status === "success") {
             setEmailVerified(true);
             setIsOtpSent(false);

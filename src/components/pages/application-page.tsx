@@ -44,7 +44,7 @@ export function ApplicationPage() {
         fetchApplicationData();
     }, [fetchApplicationData]);
 
-    
+
 
     if (loading) {
         return <ApplicationDetailsSkeleton />;
