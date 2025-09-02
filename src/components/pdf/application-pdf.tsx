@@ -11,6 +11,7 @@ import {
 
 import { jobPostObj, categoryObj, genderObj, preferenceObj, marksTypeObj, preferenceRankObj, paymentStatusObj } from "@/lib/helpers/type-object";
 import type { ApplicationSchema } from "@/lib/schemas/application.schema";
+import NotoSansDevanagari from '../../../public/fonts/NotoSansDevanagari-VariableFont_wdth,wght.ttf'
 
 // Register emoji fallback
 Font.registerEmojiSource({
@@ -18,11 +19,16 @@ Font.registerEmojiSource({
     url: "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/",
 });
 
+// Register Noto Sans Devanagari font
+Font.register({
+    family: "Noto Sans Devanagari",
+    src: NotoSansDevanagari,
+});
+
 const styles = StyleSheet.create({
     page: {
         padding: 20,
         fontSize: 10,
-        fontFamily: "Helvetica",
         backgroundColor: "#ffffff",
         lineHeight: 1.4,
         display: "flex",
@@ -117,14 +123,14 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     documentsContainer: {
-        backgroundColor: "#f9fafb",
-        border: "2px solid #d1d5db",
-        borderRadius: 8,
-        padding: 20,
-        height: "70%", // 70% of page height
-        display: "flex",
-        flexDirection: "column",
-    },
+    backgroundColor: "#f9fafb",
+    border: "2px solid #d1d5db",
+    borderRadius: 8,
+    padding: 10, // Reduced padding
+    height: "55%", // Reduced height
+    display: "flex",
+    flexDirection: "column",
+},
     documentsHeader: {
         backgroundColor: "#374151",
         color: "white",
@@ -141,21 +147,30 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         justifyContent: "space-between",
         alignContent: "flex-start",
-        gap: 15,
-        flex: 1, // Take remaining space in container
+        gap: 8, // Reduced gap
+        flex: 1,
     },
     documentItem: {
-        width: "48%", // Exactly 48% to fit 2 per row with gap
+        width: "47%", // Slightly smaller width
         alignItems: "center",
         border: "2px solid #d1d5db",
         borderRadius: 8,
-        padding: 15,
+        padding: 8, // Reduced padding
         backgroundColor: "#ffffff",
-        marginBottom: 15,
+        marginBottom: 8, // Reduced margin
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        minHeight: 200, // Consistent minimum height for all items
+        minHeight: 120, // Reduced minHeight
+    },
+    image: {
+        width: "100%",
+        height: 80, // Reduced image height
+        objectFit: "contain",
+        borderRadius: 6,
+        border: "2px solid #d1d5db",
+        maxWidth: 120, // Reduced max width
+        backgroundColor: "#f9fafb",
     },
     documentLabel: {
         fontSize: 11,
@@ -164,15 +179,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         textAlign: "center",
         height: 20, // Fixed height for consistent label spacing
-    },
-    image: {
-        width: "100%", // Full width of container
-        height: 140, // Fixed height for consistency
-        objectFit: "contain", // Changed from "cover" to "contain" to prevent cropping
-        borderRadius: 6,
-        border: "2px solid #d1d5db",
-        maxWidth: 180, // Max width constraint
-        backgroundColor: "#f9fafb", // Background color for letterboxing effect
     },
     footer: {
         height: "20%", // 20% of page height
@@ -283,10 +289,24 @@ export const ApplicationPDF = ({
         {/* First Page: Basic Info, Family, Exam Centers, Education */}
         <Page size="A4" style={styles.page}>
             {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>AGRICOOPNIC</Text>
-            </View>
+            <View style={{ ...styles.header, padding: 8, marginBottom: 8 }}>
+                <View style={{ alignItems: "center" }}>
 
+                    <Image
+                        src="https://res.cloudinary.com/dqdqxg7pf/image/upload/v1756844883/g5a5fcsr7hsexa5ysm5m.png"
+                        style={{ width: 36, height: 36, margin: "0 auto", marginBottom: 2 }}
+                    />
+                    <Text style={{ fontSize: 12, fontWeight: "bold", marginBottom: 2 }}>
+                        AGRICOOP
+                    </Text>
+                    <Text style={{ fontFamily: "Noto Sans Devanagari", fontSize: 8, marginBottom: 1 }}>
+                        कृषि एवं किसान कल्याण
+                    </Text>
+                    <Text style={{ fontSize: 8 }}>
+                        AGRICULTURE & FARMERS WELFARE
+                    </Text>
+                </View>
+            </View>
             {/* Basic Info - Compact */}
             <View style={styles.compactSection}>
                 <Text style={styles.sectionHeader}>Basic Information</Text>
@@ -429,10 +449,10 @@ export const ApplicationPDF = ({
                     return null;
                 })}
             </View>
-        </Page>
 
-        {/* Second Page: Documents (70%) + Footer (20%) */}
-        <Page size="A4" style={styles.documentsPage}>
+
+            {/* Second Page: Documents (70%) + Footer (20%) */}
+            {/* <Page size="A4" style={styles.documentsPage}> */}
             {/* payment Container */}
             <View key={data.payment.id} style={styles.paymentContainer}>
                 <Text style={styles.sectionHeader}>Payment Details</Text>
@@ -500,6 +520,7 @@ export const ApplicationPDF = ({
                     })}
                 </View>
             </View>
+            {/* </Page> */}
         </Page>
     </Document>
 );
