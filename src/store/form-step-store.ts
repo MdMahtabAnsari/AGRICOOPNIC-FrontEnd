@@ -45,7 +45,7 @@ export const useFormStepStore = create<FormStepState>((set, get) => ({
           set(() => ({ step: 4 }));
         }
       }
-      else if (basicInfo?.jobPost.name === "SUPERVISOR" || basicInfo?.jobPost.name === "CLERK" || basicInfo?.jobPost.name === "FIELD_OFFICER") {
+      else if (basicInfo?.jobPost.name === "SUPERVISOR" || basicInfo?.jobPost.name === "CLERK") {
         if (educationDetails12Th) {
           set(() => ({ step: 4 }));
         }
