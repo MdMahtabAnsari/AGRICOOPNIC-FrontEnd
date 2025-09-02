@@ -14,10 +14,10 @@ export function ContactPage() {
                     <div className="flex items-center gap-2">
                         <Phone className="w-5 h-5 text-primary" />
                         <a
-                            href="tel:+918981838997"
+                            href="tel:+918987313791"
                             className="text-blue-600 hover:underline"
                         >
-                            +91-8981838997
+                            +91-8987313791
                         </a>
                     </div>
                     <div className="flex items-center gap-2">

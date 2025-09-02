@@ -21,25 +21,19 @@ export function AboutPage() {
                             >
                                 Agricoopnic.org
                             </a>
-                        </strong>, a consultancy and hiring platform managed under{" "}
-                        <strong>Vinod Manpower Service</strong> by Mr. Vinod Kumar Tiwari.
+                        </strong>,  managed by{" "}
+                        <strong>Vinod Manpower Service</strong>
                     </p>
                     <p>
-                        We specialize in manpower consultancy and recruitment, helping businesses hire skilled candidates through a fair process of applications, assessments, and selection. Our goal is to connect the right talent with the right opportunities while supporting companies with reliable staffing solutions.
+                        It specialize in manpower consultancy and recruitment, helping businesses hire skilled candidates through a fair process of applications, assessments, and selection. Our goal is to connect the right talent with the right opportunities while supporting companies with reliable staffing solutions.
                     </p>
                     <Separator />
                     <div>
                         <strong>Mission:</strong> To provide transparent and efficient hiring services.
                     </div>
-                    <div>
-                        <strong>Vision:</strong> To be a trusted name in consultancy and manpower services across India.
-                    </div>
                     <Separator />
                     <div>
-                        <strong>Business Name:</strong> Vinod Manpower Service (Proprietorship)
-                    </div>
-                    <div>
-                        <strong>Founder:</strong> Vinod Kumar Tiwari
+                        <strong>Business Name:</strong> Vinod Manpower Service
                     </div>
                 </CardContent>
             </Card>

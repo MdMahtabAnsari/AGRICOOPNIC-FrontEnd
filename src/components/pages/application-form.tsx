@@ -81,7 +81,13 @@ export function ApplicationFormPage() {
       <Card className="w-full">
         <CardHeader className="text-center">
           <CardTitle>Application Form</CardTitle>
-          <CardDescription>Step {step} of {steps.length}</CardDescription>
+          <CardDescription>
+            Step {step} of {steps.length}
+            <br />
+            <span className="inline-block mt-2 px-3 py-1 rounded font-semibold text-sm">
+              For any support email us at <a href="mailto:Info@agricoopnic.org" className="underline text-blue-600">Info@agricoopnic.org</a>
+            </span>
+          </CardDescription>
           <CardContent className="flex flex-col items-center gap-3">
             <Stepper steps={steps} currentStep={step - 1} />
             <Progress value={step / steps.length * 100} />

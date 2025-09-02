@@ -383,8 +383,8 @@ export function BasicInformationForm() {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle>Job Post Information</CardTitle>
-                                <CardDescription>Enter the job post details</CardDescription>
+                                <CardTitle>Post Information</CardTitle>
+                                <CardDescription>Enter the post details</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <FormField
@@ -392,12 +392,12 @@ export function BasicInformationForm() {
                                     name="jobPost.name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Job Post Name</FormLabel>
+                                            <FormLabel>Post Applied For</FormLabel>
                                             <FormControl>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
-                                                            <SelectValue placeholder="Select job post"  className="text-muted-foreground" />
+                                                            <SelectValue placeholder="Select post"  className="text-muted-foreground" />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>

@@ -14,10 +14,10 @@ export function PrivacyPolicyPage() {
                     <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
                     <div className="mb-6">
                         <p>
-                            This page explains how VINOD KUMAR TIWARI and its affiliates
-                            (collectively “VINOD KUMAR TIWARI”, “we”, “our”, “us”)
+                            This page explains how VINOD MANPOWER SERVICE and its affiliates
+                            (collectively “VINOD MANPOWER SERVICE”, “we”, “our”, “us”)
                             collect, use, share, protect, and otherwise process your
-                            information/personal data when you use Agricoopnic.in.net (the
+                            information/personal data when you use Agricoopnic.org (the
                             “Platform”).
                         </p>
                         <p className="mt-2">
@@ -97,7 +97,7 @@ export function PrivacyPolicyPage() {
                                 <strong>Fraud Alert:</strong>
                                 <p>
                                     If you receive an email or call from a person/association
-                                    claiming to be VINOD KUMAR TIWARI seeking personal data like
+                                    claiming to be VINOD MANPOWER SERVICE seeking personal data like
                                     debit/credit card PIN, net-banking or mobile banking password,
                                     do not provide such information. If you have already revealed
                                     such information, report it immediately to the appropriate law
