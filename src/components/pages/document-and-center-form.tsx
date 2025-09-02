@@ -115,15 +115,15 @@ export function DocumentAndCenterForm() {
 
     useEffect(() => {
         setPref1(preference1Center);
-    }, [form, preference1Center]);
+    }, [preference1Center]);
 
     useEffect(() => {
         setPref2(preference2Center);
-    }, [form, preference2Center]);
+    }, [preference2Center]);
 
     useEffect(() => {
         setPref3(preference3Center);
-    }, [form, preference3Center]);
+    }, [preference3Center]);
 
     const onSubmit = (data: DocumentAndCenterSchema) => {
         setDocumentAndCenter(data);
