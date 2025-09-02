@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { ApplicationSchema } from "@/lib/schemas/application.schema";
 import { Button } from "@/components/ui/button";
-import { jobPostObj, genderObj, marksTypeObj, preferenceObj, preferenceRankObj,qualificationObj,paymentStatusObj,addressTypeObj } from '@/lib/helpers/type-object';
+import { jobPostObj, genderObj, marksTypeObj, preferenceObj, preferenceRankObj, qualificationObj, paymentStatusObj, addressTypeObj } from '@/lib/helpers/type-object';
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApplicationDownloadButton } from "@/components/pdf/application-download-button";
 interface Props {
@@ -17,7 +17,7 @@ export function ApplicationDetails({ data }: Props) {
     const handlePrint = useReactToPrint({
         documentTitle: `${data.name}_Application`,
         contentRef: printRef,
-        pageStyle:"@page { size: A4;  margin: 5mm; }"
+        pageStyle: "@page { size: A4;  margin: 5mm; }"
     });
 
     return (
@@ -55,7 +55,7 @@ export function ApplicationDetails({ data }: Props) {
                                     }
                                 )} />
                                 <Field label="Nationality" value={data.personalDetail.nationality} />
-                               
+
                             </Grid>
                         </Section>
 
@@ -78,13 +78,13 @@ export function ApplicationDetails({ data }: Props) {
                                 {data.education.map(edu => (
                                     <div key={edu.id} className="border rounded-md p-3 space-y-1">
                                         <Badge variant="outline">{qualificationObj[edu.qualification]}</Badge>
-                                        <Field label={edu.qualification ==='MATRICULATION' ? "School" : edu.qualification ==='INTERMEDIATE_OR_DIPLOMA'?"School/College":"College"} value={edu.institution} />
-                                        <Field label={edu.qualification ==='MATRICULATION' ? "Board" : edu.qualification ==='INTERMEDIATE_OR_DIPLOMA'?"Board/University":"University"} value={edu.boardOrUniversity} />
+                                        <Field label={edu.qualification === 'MATRICULATION' ? "School" : edu.qualification === 'INTERMEDIATE_OR_DIPLOMA' ? "School/College" : "College"} value={edu.institution} />
+                                        <Field label={edu.qualification === 'MATRICULATION' ? "Board" : edu.qualification === 'INTERMEDIATE_OR_DIPLOMA' ? "Board/University" : "University"} value={edu.boardOrUniversity} />
                                         <Field label="Year of Passing" value={edu.yearOfPassing} />
                                         <Field label="Marks Type" value={marksTypeObj[edu.marksType]} />
                                         <Field label="Marks" value={edu.marks} />
                                         {edu.subjectOrSpecialization && (
-                                            <Field label={ edu.qualification ==='INTERMEDIATE_OR_DIPLOMA'?"Stream":"Specialization"} value={edu.subjectOrSpecialization} />
+                                            <Field label={edu.qualification === 'INTERMEDIATE_OR_DIPLOMA' ? "Stream" : "Specialization"} value={edu.subjectOrSpecialization} />
                                         )}
                                     </div>
                                 ))}
@@ -156,8 +156,8 @@ export function ApplicationDetails({ data }: Props) {
 
                 <CardFooter className="flex justify-end">
                     <div className="flex justify-center items-center" >
-                    <Button className="cursor-pointer" onClick={handlePrint}>Print Application</Button>
-                    <ApplicationDownloadButton data={data} />
+                        <Button className="cursor-pointer" onClick={handlePrint}>Print Application</Button>
+                        <ApplicationDownloadButton data={data} />
                     </div>
                 </CardFooter>
             </Card>
