@@ -178,6 +178,10 @@ export function ReviewPage() {
                 <DocumentAndCenterPage />
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
+                {/* please wait for 10 seconds after completing the payment then click on Submit */}
+                <p className="text-sm font-bold">
+                    Please wait for 10 seconds after completing the payment then click on "Submit"
+                </p>
                 {isPaymentSuccessful && !successfulSubmission && !paymentLoading && (
                     <Button onClick={handleSubmit} disabled={loading} className="w-full cursor-pointer">
                         {loading ? <Loader className="animate-spin" /> : "Submit"}

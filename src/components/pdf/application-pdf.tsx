@@ -11,7 +11,6 @@ import {
 
 import { jobPostObj, categoryObj, genderObj, preferenceObj, marksTypeObj, preferenceRankObj, paymentStatusObj } from "@/lib/helpers/type-object";
 import type { ApplicationSchema } from "@/lib/schemas/application.schema";
-import NotoSansDevanagari from '../../../public/fonts/NotoSansDevanagari-VariableFont_wdth,wght.ttf'
 
 // Register emoji fallback
 Font.registerEmojiSource({
@@ -21,8 +20,8 @@ Font.registerEmojiSource({
 
 // Register Noto Sans Devanagari font
 Font.register({
-    family: "Noto Sans Devanagari",
-    src: NotoSansDevanagari,
+  family: "Noto Sans Devanagari",
+  src: "/fonts/NotoSansDevanagari-VariableFont_wdth,wght.ttf"
 });
 
 const styles = StyleSheet.create({
