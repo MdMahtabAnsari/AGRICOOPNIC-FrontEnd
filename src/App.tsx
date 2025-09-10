@@ -15,7 +15,7 @@ import { RefundPolicyPage } from '@/components/pages/refund-policy';
 import { ForgotPasswordPage } from '@/components/pages/forgot-password';
 import {ApplicationPage} from '@/components/pages/application-page';
 import { ApplicationDetailsSkeleton } from '@/components/application';
-import { ShippingAndDeliveryPolicyPage } from '@/components/pages/shippind-and-delivery-policy';
+// import { ShippingAndDeliveryPolicyPage } from '@/components/pages/shippind-and-delivery-policy';
 
 
 export default function App() {
@@ -31,7 +31,7 @@ export default function App() {
           <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="terms-and-conditions" element={<TermsAndConditionsPage />} />
           <Route path="refund-policy" element={<RefundPolicyPage />} />
-          <Route path="shipping-and-delivery-policy" element={<ShippingAndDeliveryPolicyPage />} />
+          {/* <Route path="shipping-and-delivery-policy" element={<ShippingAndDeliveryPolicyPage />} /> */}
           <Route path="signup" element={<SignupForm />} />
           <Route path="signin" element={<SignInForm />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
