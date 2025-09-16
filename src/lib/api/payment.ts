@@ -75,3 +75,21 @@ export const getUserSuccessfulPayment = async (): Promise<ApiResponseSchema> => 
         };
     }
 }
+
+export const createPayuPayment = async (paymentData: PaymentSchema): Promise<ApiResponseSchema> => {
+    try {
+        const response = await api.post("/api/payments/create-payu", paymentData);
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            throw error.response?.data as ApiResponseSchema;
+        }
+        return {
+            status: "error",
+            message: "An unexpected error occurred while creating payment.",
+            isOperational: false,
+            data: null,
+            statusCode: 500
+        };
+    }
+}

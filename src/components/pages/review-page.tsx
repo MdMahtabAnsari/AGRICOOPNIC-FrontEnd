@@ -14,17 +14,19 @@ import { createBasicInformation } from "@/lib/api/group/basic-information";
 import { createFamilyAndAddress } from "@/lib/api/group/family-and-address";
 import { createEducationDetails } from "@/lib/api/group/education-detail";
 import { createDocumentAndCenter } from "@/lib/api/group/document-and-prefrence";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
 import { formSubmit } from "@/lib/api/formSubmit";
-import { createRazorpayPayment, verifyRazorpayPayment, getUserSuccessfulPayment } from "@/lib/api/payment";
+import { getUserSuccessfulPayment } from "@/lib/api/payment";
 import { toast } from "sonner";
 import { deleteUser } from "@/lib/api/user";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getFormStatus } from "@/lib/api/formSubmit"
 import { getFees } from "@/lib/api/fees";
 import { useNavigate } from "react-router-dom";
-import type { RazorpayResponse } from "@/providers/payment-provider";
+import { PayuForm } from "@/components/payments/payu";
+
+// import type { RazorpayResponse } from "@/providers/payment-provider";
 export function ReviewPage() {
     const basicInformation = useBasicInformationStore((state) => state.basicInformation);
     const educationDetails10Th = useEducationDetailsStore10Th((state) => state.educationDetails);
@@ -107,58 +109,58 @@ export function ReviewPage() {
         navigate("/application/details")
     }, [basicInformation, educationDetails10Th, educationDetails12Th, educationDetailsGraduation, documentAndCenter, familyAndAddress, setPrevDisabled, navigate]);
 
-    const handlePayment = useCallback(async () => {
-        setIsPaymentSuccessful(false);
-        if (!basicInformation) {
-            return;
-        }
-        setLoading(true);
-        const paymentInfo = await createRazorpayPayment({
-            category: basicInformation.category.categoryType,
-            name: basicInformation.user.name,
-            email: basicInformation.user.email,
-            contact: basicInformation.user.phone,
-        });
-        if (paymentInfo.status !== "success") {
-            toast.error(paymentInfo.message);
-            setLoading(false);
-            return;
-        }
-        if (!window.Razorpay) {
-            toast.error("Razorpay not loaded");
-            setLoading(false);
-            return;
-        }
+    // const handlePayment = useCallback(async () => {
+    //     setIsPaymentSuccessful(false);
+    //     if (!basicInformation) {
+    //         return;
+    //     }
+    //     setLoading(true);
+    //     const paymentInfo = await createRazorpayPayment({
+    //         category: basicInformation.category.categoryType,
+    //         name: basicInformation.user.name,
+    //         email: basicInformation.user.email,
+    //         contact: basicInformation.user.phone,
+    //     });
+    //     if (paymentInfo.status !== "success") {
+    //         toast.error(paymentInfo.message);
+    //         setLoading(false);
+    //         return;
+    //     }
+    //     if (!window.Razorpay) {
+    //         toast.error("Razorpay not loaded");
+    //         setLoading(false);
+    //         return;
+    //     }
 
-        if (!window.Razorpay) {
-            toast.error("Payment service not loaded. Please refresh the page.");
-            setLoading(false);
-            return;
-        }
-        const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
-        const paymentObj = new window.Razorpay({
-            key: key,
-            order_id: paymentInfo.data.order.id,
-            ...paymentInfo.data,
-            handler: async (response: RazorpayResponse) => {
-                console.log("Razorpay Payment response:", response);
-                const verifyResponse = await verifyRazorpayPayment({
-                    orderId: response.razorpay_order_id,
-                    paymentId: response.razorpay_payment_id,
-                    signature: response.razorpay_signature
-                });
-                if (verifyResponse.status === 'success') {
-                    toast.success("Payment successful");
-                    setIsPaymentSuccessful(true);
-                } else {
-                    toast.error(verifyResponse.message || "Failed to verify payment");
-                }
-            }
-        });
-        paymentObj.open();
+    //     if (!window.Razorpay) {
+    //         toast.error("Payment service not loaded. Please refresh the page.");
+    //         setLoading(false);
+    //         return;
+    //     }
+    //     const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
+    //     const paymentObj = new window.Razorpay({
+    //         key: key,
+    //         order_id: paymentInfo.data.order.id,
+    //         ...paymentInfo.data,
+    //         handler: async (response: RazorpayResponse) => {
+    //             console.log("Razorpay Payment response:", response);
+    //             const verifyResponse = await verifyRazorpayPayment({
+    //                 orderId: response.razorpay_order_id,
+    //                 paymentId: response.razorpay_payment_id,
+    //                 signature: response.razorpay_signature
+    //             });
+    //             if (verifyResponse.status === 'success') {
+    //                 toast.success("Payment successful");
+    //                 setIsPaymentSuccessful(true);
+    //             } else {
+    //                 toast.error(verifyResponse.message || "Failed to verify payment");
+    //             }
+    //         }
+    //     });
+    //     paymentObj.open();
 
-        setLoading(false);
-    }, [basicInformation]);
+    //     setLoading(false);
+    // }, [basicInformation]);
 
     return (
         <Card className="border-none">
@@ -178,29 +180,25 @@ export function ReviewPage() {
                 <DocumentAndCenterPage />
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-                {/* please wait for 10 seconds after completing the payment then click on Submit */}
                 <p className="text-sm font-bold">
-                    Please wait for 10 seconds after completing the payment then click on "Submit"
+                    After completing the payment then click on "Submit"
                 </p>
                 {isPaymentSuccessful && !successfulSubmission && !paymentLoading && (
                     <Button onClick={handleSubmit} disabled={loading} className="w-full cursor-pointer">
                         {loading ? <Loader className="animate-spin" /> : "Submit"}
                     </Button>
                 )}
-                {!isPaymentSuccessful && (
-                    <Button
-                        onClick={handlePayment}
-                        disabled={loading}
-                        className="w-full cursor-pointer"
-                    >
-                        {loading ? (
-                            <Loader className="animate-spin" />
-                        ) : (
-                            <>
-                                Pay Now {fees && <>₹{fees}</>}
-                            </>
-                        )}
-                    </Button>
+                {!isPaymentSuccessful && basicInformation && fees && (
+                    <PayuForm
+                        params={{
+                            name: basicInformation.user.name,
+                            email: basicInformation.user.email,
+                            phone: basicInformation.user.phone,
+                            category: basicInformation.category.categoryType,
+                            fees: fees
+                        }}
+                        className="w-full"
+                    />
                 )}
             </CardFooter>
         </Card>
