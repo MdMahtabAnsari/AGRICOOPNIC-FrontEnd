@@ -43,9 +43,9 @@ export const customVerifyPaymentSchema = verifyPaymentSchema.omit({
 }).extend({
     paymentId: z
         .string()
-        .min(12, "paymentId must be at least 12 characters")
-        .max(22, "paymentId cannot be longer than 22 characters")
-        .regex(/^[A-Za-z0-9]+$/, "paymentId must be alphanumeric only"),
+        .min(12, "transactionId must be at least 12 characters")
+        .max(22, "transactionId cannot be longer than 22 characters")
+        .regex(/^[A-Za-z0-9]+$/, "transactionId must be alphanumeric only"),
 });
 
 export type CustomVerifyPaymentSchema = z.infer<typeof customVerifyPaymentSchema>;

@@ -1,11 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useState, useEffect, useCallback } from "react";
 import { createCustomPayment, verifyCustomPayment } from "@/lib/api/payment";
 import type { CategoryTypeEnum } from "@/lib/schemas/category.schema";
 import { useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
+import { customVerifyPaymentSchema } from "@/lib/schemas/payment.schema";
+import type { CustomVerifyPaymentSchema } from "@/lib/schemas/payment.schema";
 
 interface CustomPaymentProps {
     fees: number;
@@ -26,9 +31,17 @@ export function CustomPaymentForm({
         qrCodeDataUrl: string;
     } | null>(null);
     const [loading, setLoading] = useState(false);
-    const [paymentId, setPaymentId] = useState<null | string>(null);
 
     const navigate = useNavigate();
+
+    const form = useForm<CustomVerifyPaymentSchema>({
+        resolver: zodResolver(customVerifyPaymentSchema),
+        defaultValues: {
+            paymentId: "",
+        }
+        ,
+        mode: "onChange"
+    });
 
     const fetchPaymentData = useCallback(async () => {
         setLoading(true);
@@ -50,14 +63,9 @@ export function CustomPaymentForm({
         setLoading(false);
     }, [params]);
 
-    const handleVerifyPayment = useCallback(async () => {
-        if (!paymentId || !paymentData) {
-            toast.error("Payment ID is required for verification.");
-            return;
-        }
-
+    const handleVerifyPayment = useCallback(async (paymentData: CustomVerifyPaymentSchema) => {
         const response = await verifyCustomPayment({
-            paymentId,
+            paymentId: paymentData.paymentId,
             orderId: paymentData.orderId
         });
 
@@ -67,7 +75,14 @@ export function CustomPaymentForm({
         } else {
             toast.error(response.message);
         }
-    }, [paymentId, paymentData, navigate]);
+    }, [navigate]);
+
+
+    useEffect(() => {
+        if (paymentData?.orderId) {
+            form.setValue("orderId", paymentData.orderId);
+        }
+    }, [paymentData, form]);
 
     useEffect(() => {
         fetchPaymentData();
@@ -85,16 +100,33 @@ export function CustomPaymentForm({
         <Card className={`w-full h-fit flex justify-center items-center ${className}`} {...props}>
             <CardContent className="flex flex-col gap-4 items-center">
                 {/* show qr code and accept paymentId input and also write instuction that after payment finishes user should click verify payment with transaction id */}
-                    <img src={paymentData.qrCodeDataUrl} alt="QR Code" />
-                    <p>Please scan the QR code to complete your payment.</p>
-                    <p>After the payment is completed, enter the transaction ID below:</p>
-                    <Input
-                        placeholder="Transaction ID"
-                        id="paymentId"
-                        value={paymentId || ""}
-                        onChange={(e) => setPaymentId(e.target.value)}
-                    />
-                <Button onClick={handleVerifyPayment} className="cursor-pointer w-full">Verify Payment</Button>
+                <img src={paymentData.qrCodeDataUrl} alt="QR Code" />
+                <p>
+                    Please scan the QR code to complete your payment of <strong>₹{ params.fees }</strong>.
+                </p>
+                <p>
+                    After completing your UPI payment, please enter the UPI Transaction/Reference ID
+                    (available in your payment app’s history/receipt) below.
+                    Your form will be submitted only after successful verification.
+                </p>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(handleVerifyPayment)} className="w-full space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="paymentId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Transaction ID</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Enter Transaction ID" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button className="cursor-pointer w-full" disabled={!form.formState.isValid}>Verify Payment</Button>
+                    </form>
+                </Form>
             </CardContent>
         </Card>
     );
