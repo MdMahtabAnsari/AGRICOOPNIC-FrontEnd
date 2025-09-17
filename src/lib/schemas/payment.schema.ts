@@ -15,6 +15,17 @@ export const paymentSchema = z.object({
     contact: phone,
 });
 
+
+export const customPaymentSchema = paymentSchema.omit({
+    name: true,
+    email: true,
+    contact: true
+})
+
+export type CustomPaymentSchema = z.infer<typeof customPaymentSchema>;
+
+
+
 export type PaymentSchema = z.infer<typeof paymentSchema>;
 
 
@@ -25,3 +36,10 @@ export const verifyPaymentSchema = z.object({
 });
 
 export type VerifyPaymentSchema = z.infer<typeof verifyPaymentSchema>;
+
+
+export const customVerifyPaymentSchema = verifyPaymentSchema.omit({
+    signature: true
+});
+
+export type CustomVerifyPaymentSchema = z.infer<typeof customVerifyPaymentSchema>;

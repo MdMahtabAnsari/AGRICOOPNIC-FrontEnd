@@ -24,7 +24,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getFormStatus } from "@/lib/api/formSubmit"
 import { getFees } from "@/lib/api/fees";
 import { useNavigate } from "react-router-dom";
-import { PayuForm } from "@/components/payments/payu";
+// import { PayuForm } from "@/components/payments/payu";
+import { CustomPaymentForm } from "@/components/payments/custom-payment";
 
 // import type { RazorpayResponse } from "@/providers/payment-provider";
 export function ReviewPage() {
@@ -180,24 +181,17 @@ export function ReviewPage() {
                 <DocumentAndCenterPage />
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-                <p className="text-sm font-bold">
-                    After completing the payment then click on "Submit"
-                </p>
                 {isPaymentSuccessful && !successfulSubmission && !paymentLoading && (
                     <Button onClick={handleSubmit} disabled={loading} className="w-full cursor-pointer">
                         {loading ? <Loader className="animate-spin" /> : "Submit"}
                     </Button>
                 )}
                 {!isPaymentSuccessful && basicInformation && fees && (
-                    <PayuForm
+                    <CustomPaymentForm className="w-full h-fit"
                         params={{
-                            name: basicInformation.user.name,
-                            email: basicInformation.user.email,
-                            phone: basicInformation.user.phone,
                             category: basicInformation.category.categoryType,
                             fees: fees
                         }}
-                        className="w-full"
                     />
                 )}
             </CardFooter>
