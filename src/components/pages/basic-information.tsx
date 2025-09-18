@@ -527,11 +527,11 @@ export function BasicInformationPage() {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Job Post Information</CardTitle>
-                        <CardDescription>Details about the job post</CardDescription>
+                        <CardTitle>Post Information</CardTitle>
+                        <CardDescription>Details about the post</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p><strong>Job Post:</strong> {basicInformation?.jobPost.name ? jobPostObj[basicInformation.jobPost.name] : ""}</p>
+                        <p><strong>Post Applied For:</strong> {basicInformation?.jobPost.name ? jobPostObj[basicInformation.jobPost.name] : ""}</p>
                     </CardContent>
                 </Card>
                 <Card>
