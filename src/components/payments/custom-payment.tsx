@@ -80,17 +80,17 @@ export function CustomPaymentForm({
 
     const handleVerifyPayment = useCallback(async (paymentData: CustomVerifyPaymentInputSchema) => {
         const response = await verifyCustomPayment({
-        paymentId: paymentData.paymentId,
-        orderId: paymentData.orderId,
-        url: paymentData.url,
-        dateTime: new Date(
-            new Date(paymentData.date!).setHours(
-                parseInt(paymentData.time.split(':')[0]),
-                parseInt(paymentData.time.split(':')[1]),
-                parseInt(paymentData.time.split(':')[2])
-            )
-        ),
-    });
+            paymentId: paymentData.paymentId,
+            orderId: paymentData.orderId,
+            url: paymentData.url,
+            dateTime: new Date(
+                new Date(paymentData.date!).setHours(
+                    parseInt(paymentData.time.split(':')[0]),
+                    parseInt(paymentData.time.split(':')[1]),
+                    parseInt(paymentData.time.split(':')[2])
+                )
+            ),
+        });
         if (response.status === "success") {
             toast.success("Payment verified successfully.");
             navigate("/application/auto-submit")
@@ -130,7 +130,6 @@ export function CustomPaymentForm({
                     Please scan the QR code to complete your payment of{" "}
                     <strong>₹{params.fees}</strong>.
                 </p>
-
                 <p>
                     After completing your UPI payment, please enter your{" "}
                     <strong>
@@ -138,7 +137,6 @@ export function CustomPaymentForm({
                     </strong>{" "}
                     (available in your payment app’s history or receipt) below.
                 </p>
-
                 <p>
                     You must also <strong>upload a screenshot of the transaction receipt</strong>{" "}
                     as proof of payment. Make sure the screenshot clearly shows:
@@ -151,7 +149,6 @@ export function CustomPaymentForm({
                         Payment status as <strong>Success</strong> or <strong>Completed</strong>
                     </li>
                 </ul>
-
                 <p className="text-sm italic">
                     Once you’ve entered the details and uploaded the screenshot, click{" "}
                     <strong>Verify Payment</strong> to proceed. Your form will be submitted only
@@ -161,6 +158,9 @@ export function CustomPaymentForm({
                     Please also enter the <strong>exact date and time of your payment</strong> as shown
                     in your UPI app’s transaction receipt. This helps us verify your payment more
                     accurately.
+                </p>
+                <p className="text-sm text-red-600 font-bold mt-2">
+                    Incorrect payment details will lead to rejection of your form and you will not be able to give the exam.
                 </p>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleVerifyPayment)} className="w-full space-y-4">
@@ -213,7 +213,7 @@ export function CustomPaymentForm({
                                 name="date"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date of Birth</FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
@@ -275,7 +275,7 @@ export function CustomPaymentForm({
                                 <img src={url} alt="Payment Screenshot" width={500} height={300} />
                             </div>
                         )}
-                        <Button className="cursor-pointer w-full" >
+                        <Button className="cursor-pointer w-full" type="submit" disabled={!form.formState.isValid || form.formState.isSubmitting}>
                             {form.formState.isSubmitting ? <Loader className="animate-spin" /> : "Verify Payment"}
                         </Button>
                     </form>
