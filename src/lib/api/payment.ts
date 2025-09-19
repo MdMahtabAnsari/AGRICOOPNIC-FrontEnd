@@ -115,6 +115,7 @@ export const createCustomPayment = async (paymentData: CustomPaymentSchema): Pro
 
 export const verifyCustomPayment = async (verifyData: CustomVerifyPaymentSchema): Promise<ApiResponseSchema> => {
     try {
+        console.log('verifyData', verifyData);
         const response = await api.post("/api/payments/verify-custom-payment", verifyData);
         return response.data;
     } catch (error) {

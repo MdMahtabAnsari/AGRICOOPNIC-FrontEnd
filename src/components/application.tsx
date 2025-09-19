@@ -113,7 +113,15 @@ export function ApplicationDetails({ data }: Props) {
                                 <Field label="Status" value={paymentStatusObj[data.payment.paymentStatus]} />
                                 <Field label="Payment ID" value={data.payment.paymentId} />
                                 <Field label="Order ID" value={data.payment.orderId} />
-                                <Field label="Date & Time" value={new Date(data.payment.createdAt).toLocaleTimeString(
+                                <Field label="Date & Time" value={data.payment.dateTime? new Date(data.payment.dateTime).toLocaleTimeString(
+                                    "en-IN",
+                                    {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric',
+                                        formatMatcher: 'best fit'
+                                    }
+                                ):new Date(data.payment.updatedAt).toLocaleTimeString(
                                     "en-IN",
                                     {
                                         day: 'numeric',

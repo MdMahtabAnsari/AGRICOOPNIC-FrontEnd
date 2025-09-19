@@ -98,6 +98,7 @@ const paymentSchema = z.object({
     paymentStatus: paymentStatusEnum,
     createdAt: z.date(),
     updatedAt: z.date(),
+    dateTime: z.date().optional().nullable(),
 });
 
 export const applicationSchema = z.object({

@@ -14,7 +14,16 @@ import type { CustomVerifyPaymentInputSchema } from "@/lib/schemas/payment.schem
 import { CloudinaryUploadWidget } from "@/components/custom/cloudinary-widget";
 import { Loader } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
 
+import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
 interface CustomPaymentProps {
     fees: number;
     category: CategoryTypeEnum;
@@ -42,13 +51,8 @@ export function CustomPaymentForm({
         defaultValues: {
             paymentId: "",
             url: "",
-            day: "01",
-            month: "01",
-            year: "2025",
-            hour: "12",
-            minute: "00",
-            second: "00",
-            ampm: "AM",
+            date: undefined,
+            time: "10:30:01",
         }
         ,
         mode: "onChange"
@@ -75,20 +79,24 @@ export function CustomPaymentForm({
     }, [params]);
 
     const handleVerifyPayment = useCallback(async (paymentData: CustomVerifyPaymentInputSchema) => {
-        // date time DD-MM-YYYY HH:MM:SS AM/PM
         const response = await verifyCustomPayment({
-            paymentId: paymentData.paymentId,
-            orderId: paymentData.orderId,
-            url: paymentData.url,
-            dateTime: `${paymentData.day}-${paymentData.month}-${paymentData.year} ${paymentData.hour}:${paymentData.minute}:${paymentData.second} ${paymentData.ampm}`
-        });
-
+        paymentId: paymentData.paymentId,
+        orderId: paymentData.orderId,
+        url: paymentData.url,
+        dateTime: new Date(
+            new Date(paymentData.date!).setHours(
+                parseInt(paymentData.time.split(':')[0]),
+                parseInt(paymentData.time.split(':')[1]),
+                parseInt(paymentData.time.split(':')[2])
+            )
+        ),
+    });
         if (response.status === "success") {
             toast.success("Payment verified successfully.");
             navigate("/application/auto-submit")
         } else {
             toast.error(response.message);
-        }
+        } console.log(paymentData);
     }, [navigate]);
 
 
@@ -199,95 +207,62 @@ export function CustomPaymentForm({
                         />
                         {/* accept date time of payment */}
                         <Label className="text-center">Date & Time of Payment (as per your UPI app)</Label>
-                        <div className="sm:grid sm:grid-cols-7 gap-2 w-full flex flex-wrap">
-
+                        <div className="sm:grid sm:grid-cols-2 gap-2 w-full flex flex-wrap">
                             <FormField
                                 control={form.control}
-                                name="day"
+                                name="date"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Day</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="DD" {...field} />
-                                        </FormControl>
+                                        <FormLabel>Date of Birth</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full justify-start text-left font-normal",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick a date</span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    disabled={(date) =>
+                                                        date > new Date() || date < new Date("1900-01-01")
+                                                    }
+                                                    captionLayout="dropdown"
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="month"
+                                name="time"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Month</FormLabel>
+                                        <FormLabel>Time</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="MM" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="year"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Year</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="YYYY" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="hour"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Hour</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="HH" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="minute"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Minute</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="MM" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="second"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Second</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="SS" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="ampm"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>AM/PM</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="AM/PM" {...field} />
+                                            <Input
+                                                type="time"
+                                                step="1"
+                                                placeholder="hh:mm:ss AM/PM"
+                                                {...field}
+                                                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -300,7 +275,7 @@ export function CustomPaymentForm({
                                 <img src={url} alt="Payment Screenshot" width={500} height={300} />
                             </div>
                         )}
-                        <Button className="cursor-pointer w-full" disabled={!form.formState.isValid || form.formState.isSubmitting}>
+                        <Button className="cursor-pointer w-full" >
                             {form.formState.isSubmitting ? <Loader className="animate-spin" /> : "Verify Payment"}
                         </Button>
                     </form>
