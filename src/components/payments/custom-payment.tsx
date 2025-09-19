@@ -51,8 +51,8 @@ export function CustomPaymentForm({
         defaultValues: {
             paymentId: "",
             url: "",
-            date: undefined,
-            time: "10:30:01",
+            date: new Date(),
+            time: new Date().toTimeString().split(' ')[0],
         }
         ,
         mode: "onChange"
@@ -149,15 +149,15 @@ export function CustomPaymentForm({
                         Payment status as <strong>Success</strong> or <strong>Completed</strong>
                     </li>
                 </ul>
-                <p className="text-sm italic">
+                <p className="text-sm">
+                    You must have to <strong>provide the exact date and time of your payment</strong> as shown
+                    in your UPI app’s transaction receipt. This helps us verify your payment more
+                    accurately.
+                </p>
+                <p className="text-sm">
                     Once you’ve entered the details and uploaded the screenshot, click{" "}
                     <strong>Verify Payment</strong> to proceed. Your form will be submitted only
                     after successful verification.
-                </p>
-                <p className="text-sm">
-                    Please also enter the <strong>exact date and time of your payment</strong> as shown
-                    in your UPI app’s transaction receipt. This helps us verify your payment more
-                    accurately.
                 </p>
                 <p className="text-sm text-red-600 font-bold mt-2">
                     Incorrect payment details will lead to rejection of your form and you will not be able to give the exam.
