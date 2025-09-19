@@ -459,15 +459,23 @@ export const ApplicationPDF = ({
                     <View style={styles.column}>
                         <Text style={styles.label}>Order ID: <Text style={styles.value}>{data.payment.orderId}</Text></Text>
                         <Text style={styles.label}>Payment ID: <Text style={styles.value}>{data.payment.paymentId}</Text></Text>
-                        <Text style={styles.label}>Payment Date & Time: <Text style={styles.value}>{new Date(data.payment.createdAt).toLocaleTimeString(
-                            "en-IN",
-                            {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric',
-                                formatMatcher: 'best fit'
-                            }
-                        )}</Text></Text>
+                        <Text style={styles.label}>Payment Date & Time: <Text style={styles.value}>{data.payment.dateTime? new Date(data.payment.dateTime).toLocaleTimeString(
+                                    "en-IN",
+                                    {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric',
+                                        formatMatcher: 'best fit'
+                                    }
+                                ):new Date(data.payment.updatedAt).toLocaleTimeString(
+                                    "en-IN",
+                                    {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric',
+                                        formatMatcher: 'best fit'
+                                    }
+                                )}</Text></Text>
                     </View>
                     <View style={styles.column}>
                         <Text style={styles.label}>Total Amount (in Rupees): <Text style={styles.value}>{data.payment.amount}</Text></Text>
