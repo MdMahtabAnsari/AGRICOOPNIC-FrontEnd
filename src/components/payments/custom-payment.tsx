@@ -9,10 +9,11 @@ import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
-import { customVerifyPaymentSchema } from "@/lib/schemas/payment.schema";
-import type { CustomVerifyPaymentSchema } from "@/lib/schemas/payment.schema";
+import { customVerifyPaymentInputSchema } from "@/lib/schemas/payment.schema";
+import type { CustomVerifyPaymentInputSchema } from "@/lib/schemas/payment.schema";
 import { CloudinaryUploadWidget } from "@/components/custom/cloudinary-widget";
 import { Loader } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 interface CustomPaymentProps {
     fees: number;
@@ -36,11 +37,18 @@ export function CustomPaymentForm({
 
     const navigate = useNavigate();
 
-    const form = useForm<CustomVerifyPaymentSchema>({
-        resolver: zodResolver(customVerifyPaymentSchema),
+    const form = useForm<CustomVerifyPaymentInputSchema>({
+        resolver: zodResolver(customVerifyPaymentInputSchema),
         defaultValues: {
             paymentId: "",
-            url: ""
+            url: "",
+            day: "01",
+            month: "01",
+            year: "2025",
+            hour: "12",
+            minute: "00",
+            second: "00",
+            ampm: "AM",
         }
         ,
         mode: "onChange"
@@ -66,11 +74,13 @@ export function CustomPaymentForm({
         setLoading(false);
     }, [params]);
 
-    const handleVerifyPayment = useCallback(async (paymentData: CustomVerifyPaymentSchema) => {
+    const handleVerifyPayment = useCallback(async (paymentData: CustomVerifyPaymentInputSchema) => {
+        // date time DD-MM-YYYY HH:MM:SS AM/PM
         const response = await verifyCustomPayment({
             paymentId: paymentData.paymentId,
             orderId: paymentData.orderId,
-            url: paymentData.url
+            url: paymentData.url,
+            dateTime: `${paymentData.day}-${paymentData.month}-${paymentData.year} ${paymentData.hour}:${paymentData.minute}:${paymentData.second} ${paymentData.ampm}`
         });
 
         if (response.status === "success") {
@@ -92,7 +102,7 @@ export function CustomPaymentForm({
         fetchPaymentData();
     }, [fetchPaymentData]);
 
-    const url =  form.watch("url");
+    const url = form.watch("url");
 
     if (loading) {
         return <div className={className} {...props}>Loading...</div>;
@@ -139,6 +149,11 @@ export function CustomPaymentForm({
                     <strong>Verify Payment</strong> to proceed. Your form will be submitted only
                     after successful verification.
                 </p>
+                <p className="text-sm">
+                    Please also enter the <strong>exact date and time of your payment</strong> as shown
+                    in your UPI app’s transaction receipt. This helps us verify your payment more
+                    accurately.
+                </p>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleVerifyPayment)} className="w-full space-y-4">
                         <FormField
@@ -182,6 +197,104 @@ export function CustomPaymentForm({
                                 </FormItem>
                             )}
                         />
+                        {/* accept date time of payment */}
+                        <Label className="text-center">Date & Time of Payment (as per your UPI app)</Label>
+                        <div className="sm:grid sm:grid-cols-7 gap-2 w-full flex flex-wrap">
+
+                            <FormField
+                                control={form.control}
+                                name="day"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Day</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="DD" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="month"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Month</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="MM" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="year"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Year</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="YYYY" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="hour"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Hour</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="HH" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="minute"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Minute</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="MM" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="second"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Second</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="SS" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="ampm"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>AM/PM</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="AM/PM" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
                         {url && (
                             <div className="flex flex-col items-center">
                                 <img src={url} alt="Payment Screenshot" width={500} height={300} />
