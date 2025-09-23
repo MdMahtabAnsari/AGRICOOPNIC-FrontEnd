@@ -25,7 +25,8 @@ import { getFormStatus } from "@/lib/api/formSubmit"
 import { getFees } from "@/lib/api/fees";
 import { useNavigate } from "react-router-dom";
 // import { PayuForm } from "@/components/payments/payu";
-import { CustomPaymentForm } from "@/components/payments/custom-payment";
+// import { CustomPaymentForm } from "@/components/payments/custom-payment";
+import { BankPaymentForm } from "../payments/bank-payment";
 
 // import type { RazorpayResponse } from "@/providers/payment-provider";
 export function ReviewPage() {
@@ -187,7 +188,7 @@ export function ReviewPage() {
                     </Button>
                 )}
                 {!isPaymentSuccessful && basicInformation && fees && (
-                    <CustomPaymentForm className="w-full h-fit"
+                    <BankPaymentForm className="w-full h-fit"
                         params={{
                             category: basicInformation.category.categoryType,
                             fees: fees

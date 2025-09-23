@@ -3,15 +3,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useState, useEffect, useCallback } from "react";
-import { createCustomPayment, verifyCustomPayment } from "@/lib/api/payment";
-import type { CategoryTypeEnum } from "@/lib/schemas/category.schema";
+import { bankPayment } from "@/lib/api/payment";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
-import { customVerifyPaymentInputSchema } from "@/lib/schemas/payment.schema";
-import type { CustomVerifyPaymentInputSchema } from "@/lib/schemas/payment.schema";
+import { bankPaymentInputSchema } from "@/lib/schemas/payment.schema";
+import type { BankPaymentInputSchema } from "@/lib/schemas/payment.schema";
 import { CloudinaryUploadWidget } from "@/components/custom/cloudinary-widget";
+import type { BankSchema } from "@/lib/schemas/api-response/bank.schema";
 import { Loader } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,69 +19,59 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { bankDetails } from "@/lib/api/bank";
+import type {CustomPaymentFormProps} from "@/components/payments/custom-payment"
 
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-interface CustomPaymentProps {
-    fees: number;
-    category: CategoryTypeEnum;
-}
 
-export interface CustomPaymentFormProps extends React.HTMLAttributes<HTMLDivElement> {
-    params: CustomPaymentProps;
-}
 
-export function CustomPaymentForm({
+
+
+export function BankPaymentForm({
     className,
     params,
     ...props
 }: CustomPaymentFormProps) {
-    const [paymentData, setPaymentData] = useState<{
-        orderId: string;
-        qrCodeDataUrl: string;
-    } | null>(null);
     const [loading, setLoading] = useState(false);
+
+    const [bankDetail, setBankDetail] = useState<BankSchema | null>(null);
 
     const navigate = useNavigate();
 
-    const form = useForm<CustomVerifyPaymentInputSchema>({
-        resolver: zodResolver(customVerifyPaymentInputSchema),
+    const form = useForm<BankPaymentInputSchema>({
+        resolver: zodResolver(bankPaymentInputSchema),
         defaultValues: {
             paymentId: "",
             url: "",
             date: new Date(),
             time: new Date().toTimeString().split(' ')[0],
+            category: params.category,
         }
         ,
         mode: "onChange"
     });
 
-    const fetchPaymentData = useCallback(async () => {
+    const fetchBankDetails = useCallback(async () => {
         setLoading(true);
-        const response = await createCustomPayment({
-            category: params.category
-        });
-
+        const response = await bankDetails();
         if (response.status === "success") {
-            setPaymentData({
-                orderId: response.data.order.orderId,
-                qrCodeDataUrl: response.data.qrCodeDataUrl
-            });
+            setBankDetail(response.data);
         }
         else {
-            setPaymentData(null);
-            toast.error(response.message);
+            setBankDetail(null);
+            toast.error(response.message || "Failed to fetch bank details");
         }
-
         setLoading(false);
-    }, [params]);
+    }, []);
 
-    const handleVerifyPayment = useCallback(async (paymentData: CustomVerifyPaymentInputSchema) => {
-        const response = await verifyCustomPayment({
+
+    const handleVerifyPayment = useCallback(async (paymentData: BankPaymentInputSchema) => {
+        const response = await bankPayment({
             paymentId: paymentData.paymentId,
-            orderId: paymentData.orderId,
+            category: paymentData.category,
             url: paymentData.url,
             dateTime: new Date(
                 new Date(paymentData.date!).setHours(
@@ -101,14 +91,8 @@ export function CustomPaymentForm({
 
 
     useEffect(() => {
-        if (paymentData?.orderId) {
-            form.setValue("orderId", paymentData.orderId);
-        }
-    }, [paymentData, form]);
-
-    useEffect(() => {
-        fetchPaymentData();
-    }, [fetchPaymentData]);
+        fetchBankDetails();
+    }, [fetchBankDetails]);
 
     const url = form.watch("url");
 
@@ -116,51 +100,63 @@ export function CustomPaymentForm({
         return <div className={className} {...props}>Loading...</div>;
     }
 
-    if (!paymentData) {
+    if (!bankDetail) {
         return null;
     }
 
     return (
         <Card className={`w-full h-fit flex justify-center items-center ${className}`} {...props}>
             <CardContent className="flex flex-col gap-4 items-center">
-                {/* show qr code and accept paymentId input and also write instuction that after payment finishes user should click verify payment with transaction id */}
-                <img src={paymentData.qrCodeDataUrl} alt="QR Code" />
+                <h3 className="text-2xl font-bold text-center">Bank Transfer Payment</h3>
+                <div className="w-full p-4 border rounded-md">
+                    <h4 className="text-lg font-semibold mb-2">Bank Details</h4>
+                    <p className="text-sm">
+                        <strong>Account Number:</strong> {bankDetail.accountNo}
+                    </p>
 
-                <p>
-                    Please scan the QR code to complete your payment of{" "}
-                    <strong>₹{params.fees}</strong>.
-                </p>
-                <p>
-                    After completing your UPI payment, please enter your{" "}
-                    <strong>
-                        UPI Transaction/Reference ID / UTR (Unique Transaction Reference) number
-                    </strong>{" "}
-                    (available in your payment app’s history or receipt) below.
-                </p>
-                <p>
-                    You must also <strong>upload a screenshot of the transaction receipt</strong>{" "}
-                    as proof of payment. Make sure the screenshot clearly shows:
-                </p>
-                <ul className="list-disc pl-6 text-left">
-                    <li>Transaction/Reference ID / UTR (Unique Transaction Reference) number</li>
-                    <li>Amount paid (₹{params.fees})</li>
-                    <li>Date &amp; time of the transaction</li>
+                    <p className="text-sm">
+                        <strong>Bank Name:</strong> {bankDetail.bankName}
+                    </p>
+                    <p className="text-sm">
+                        <strong>IFSC Code:</strong> {bankDetail.ifscCode}
+                    </p>
+                </div>
+
+                <h4 className="text-lg font-semibold mb-2">Instructions for Bank Transfer</h4>
+                <ol className="list-decimal pl-6 space-y-2 text-sm text-left">
                     <li>
-                        Payment status as <strong>Success</strong> or <strong>Completed</strong>
+                        <strong>Check Bank Details Carefully:</strong> Ensure you transfer the exact fees of{" "}
+                        <strong>₹{params.fees}</strong> to the provided account details (Account Number, Bank Name, IFSC Code).
                     </li>
-                </ul>
-                <p className="text-sm">
-                    You must have to <strong>provide the exact date and time of your payment</strong> as shown
-                    in your UPI app’s transaction receipt. This helps us verify your payment more
-                    accurately.
-                </p>
-                <p className="text-sm">
-                    Once you’ve entered the details and uploaded the screenshot, click{" "}
-                    <strong>Verify Payment</strong> to proceed. Your form will be submitted only
-                    after successful verification.
-                </p>
-                <p className="text-sm text-red-600 font-bold mt-2">
-                    Incorrect payment details will lead to rejection of your form and you will not be able to give the exam.
+                    <li>
+                        <strong>Make the Bank Transfer:</strong> Use your preferred method like{" "}
+                        <strong>NEFT / RTGS / IMPS</strong> from your bank account. Enter the exact
+                        amount and complete the transfer.
+                    </li>
+                    <li>
+                        <strong>After Payment – Collect Proof:</strong> Once your transfer is successful,
+                        note down the <strong>Transaction Reference Number / UTR</strong> generated by
+                        your bank. Also, download or take a screenshot of the bank transfer receipt.
+                        The proof must clearly show:
+                        <ul className="list-disc pl-6">
+                            <li>Transaction Reference Number / UTR</li>
+                            <li>Amount Paid (₹{params.fees})</li>
+                            <li>Date &amp; Time of Transfer</li>
+                            <li>Status as <strong>Success</strong> or <strong>Completed</strong></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Fill the Verification Form:</strong> Enter the Transaction Reference/UTR,
+                        upload the receipt screenshot, and provide the exact Date &amp; Time of transfer.
+                    </li>
+                    <li>
+                        <strong>Submit for Verification:</strong> Click <strong>Verify Payment</strong>.
+                        Your form will be processed only after successful verification of your bank transfer.
+                    </li>
+                </ol>
+                <p className="text-sm text-red-600 font-bold mt-3">
+                    ⚠️ Incorrect or mismatched details will lead to rejection of your form. Without proper
+                    verification of your bank transfer, you will not be allowed to appear for the exam.
                 </p>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleVerifyPayment)} className="w-full space-y-4">
@@ -206,7 +202,7 @@ export function CustomPaymentForm({
                             )}
                         />
                         {/* accept date time of payment */}
-                        <Label className="text-center">Date & Time of Payment (as per your UPI app)</Label>
+                        <Label className="text-center">Date & Time of Payment</Label>
                         <div className="sm:grid sm:grid-cols-2 gap-2 w-full flex flex-wrap">
                             <FormField
                                 control={form.control}
