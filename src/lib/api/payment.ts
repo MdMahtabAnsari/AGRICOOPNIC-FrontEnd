@@ -1,7 +1,7 @@
 import api from "@/lib/api/api";
 import { AxiosError } from "axios";
 import type { ApiResponseSchema } from "@/lib/schemas/api-response/api-response";
-import type { PaymentSchema, VerifyPaymentSchema, CustomPaymentSchema, CustomVerifyPaymentSchema,BankPaymentSchema } from "@/lib/schemas/payment.schema";
+import type { PaymentSchema, VerifyPaymentSchema, CustomPaymentSchema, CustomVerifyPaymentSchema,BankPaymentSchema,CreateLinkPaymentSchema } from "@/lib/schemas/payment.schema";
 
 
 export async function createPhonePePayment(paymentData: PaymentSchema): Promise<ApiResponseSchema> {
@@ -150,3 +150,23 @@ export const bankPayment = async (paymentData: BankPaymentSchema): Promise<ApiRe
         };
     }
 }
+
+
+export const createLinkPayment = async (paymentData: CreateLinkPaymentSchema): Promise<ApiResponseSchema> => {
+    try {
+        const response = await api.post("/api/payments/create-link-payment", paymentData);
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            throw error.response?.data as ApiResponseSchema;
+        }
+        return {
+            status: "error",
+            message: "An unexpected error occurred while creating payment.",
+            isOperational: false,
+            data: null,
+            statusCode: 500
+        };
+    }
+}
+

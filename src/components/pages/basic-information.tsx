@@ -29,6 +29,8 @@ import { isAadhaarExists, isEmailExists, isPhoneExists } from "@/lib/api/user.ts
 import { aadhaar as aadhaarSchema, email as emailSchema, phone as phoneSchema } from "@/lib/schemas/common.schema.ts";
 import { jobPostObj,categoryObj } from "@/lib/helpers/type-object";
 
+import { PayUAlert } from "@/components/alert/payu-alert";
+
 export function BasicInformationForm() {
     const isEmailVerified = useEmailVerifiedStore((state) => state.isVerified);
     const setEmailVerified = useEmailVerifiedStore((state) => state.setVerified)
@@ -46,6 +48,9 @@ export function BasicInformationForm() {
     const [isEmailExist, setIsEmailExist] = useState(false);
     const [isPhoneExist, setIsPhoneExists] = useState(false);
     const [isAadhaarExist, setIsAadhaarExist] = useState(false);
+
+    const [isOpen, setIsOpen] = useState(true);
+    const handleClose = () => setIsOpen(false);
 
     const form = useForm<BasicInformationSchema>({
         resolver: zodResolver(basicInformationSchema),
@@ -196,12 +201,12 @@ export function BasicInformationForm() {
             (phone !== basicInformation.user.phone) ||
             (aadhaar !== basicInformation.user.aadhaar) ||
             (jobPostName !== basicInformation.jobPost.name) ||
-            (categoryType !== basicInformation.category.categoryType)) {
+            (categoryType !== basicInformation.category.categoryType) || (email !== basicInformation.user.email)) {
             setDisabled(true);
         } else {
             setDisabled(false);
         }
-    }, [aadhaar, basicInformation, categoryType, jobPostName, loading, name, phone, setDisabled]);
+    }, [aadhaar, basicInformation, categoryType, email, jobPostName, loading, name, phone, setDisabled]);
 
     const handleCreateOtp = useCallback(async () => {
         if (!email) {
@@ -450,6 +455,7 @@ export function BasicInformationForm() {
                             disabled={!disabled || !isEmailVerified || isEmailExist || isPhoneExist || isAadhaarExist}>Submit</Button>
                     </form>
                 </Form>
+                 <PayUAlert isOpen={isOpen} action={handleClose} />
             </CardContent>
         </Card>
     );

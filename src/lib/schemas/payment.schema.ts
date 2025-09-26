@@ -81,3 +81,12 @@ export const bankPaymentInputSchema = customVerifyPaymentInputSchema.omit({order
 });
 
 export type BankPaymentInputSchema = z.infer<typeof bankPaymentInputSchema>;
+
+
+export const createLinkPaymentSchema = z.object({
+    email: email,
+    contact: phone,
+    category: categoryTypeEnum,
+});
+
+export type CreateLinkPaymentSchema = z.infer<typeof createLinkPaymentSchema>;

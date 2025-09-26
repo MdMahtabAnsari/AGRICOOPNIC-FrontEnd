@@ -33,15 +33,10 @@ export function Footer() {
 								Refund Policy
 							</Link>
 						</Badge>
-						{/* Updated to external Razorpay URL */}
 						<Badge asChild variant="outline" className="rounded-full px-4 py-2 bg-white/80 hover:bg-blue-100 dark:bg-gray-800 dark:hover:bg-gray-700 transition-all">
-							<a
-								href="https://merchant.razorpay.com/policy/RFobTGYnKa3A88/shipping"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
+							<Link to="/shipping-and-delivery-policy">
 								Shipping & Delivery Policy
-							</a>
+							</Link>
 						</Badge>
 				</div>
 				<Separator className="my-2" />
@@ -56,16 +51,7 @@ export function Footer() {
 						<strong>Refund Policy:</strong> For information about refunds, visit our <Link to="/refund-policy" className="text-blue-600 hover:underline">Refund Policy</Link> page.
 					</p>
 					<p>
-						<strong>Shipping & Delivery Policy:</strong> For shipping details, visit our{" "}
-						<a
-							href="https://merchant.razorpay.com/policy/RFobTGYnKa3A88/shipping"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="text-blue-600 hover:underline"
-						>
-							Shipping & Delivery Policy
-						</a>{" "}
-						page.
+						<strong>Shipping & Delivery Policy:</strong> Learn about our shipping methods and delivery timelines at our <Link to="/shipping-and-delivery-policy" className="text-blue-600 hover:underline">Shipping & Delivery Policy</Link> page.
 					</p>
 				</div>
 			</CardContent>

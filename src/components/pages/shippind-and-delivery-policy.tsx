@@ -17,13 +17,9 @@ export function ShippingAndDeliveryPolicyPage() {
                         <p className="mt-2">
                             Delivery of all orders will be to the address provided by the buyer. Delivery of our services will be confirmed on your mail ID as specified during registration.
                         </p>
-                        <p className="mt-2">
-                            For any issues in utilizing our services you may contact our helpdesk on <span className="font-medium"><a
-                                href="tel:+918981838997"
-                                className="text-blue-600 hover:underline"
-                            >
-                                +91-8981838997
-                            </a></span> or <a href="mailto:Vinodkumartiwari243@gmail.com" className="text-blue-600 hover:underline">Vinodkumartiwari243@gmail.com</a>.
+
+                        <p className="mt-2">For any issues in utilizing our services you may mail us at{" "}
+                            <a href="mailto:Info@agricoopnic.org" className="text-blue-600 hover:underline">Info@agricoopnic.org</a>.
                         </p>
                     </div>
                 </CardContent>

@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone } from "lucide-react";
 
 export function RefundPolicyPage() {
     return (
@@ -32,21 +31,7 @@ export function RefundPolicyPage() {
                             Certain services or digital products may not be eligible for a refund once delivered. In such cases, this will be clearly mentioned at the time of purchase.
                         </p>
                     </div>
-                    <div>
-                        <h2 className="text-xl font-semibold mb-2">Contact Us</h2>
-                        <p>
-                            If you have any questions regarding our refund policy, please contact us at:
-                            <div className="flex items-center gap-2">
-                                <Phone className="w-5 h-5 text-primary" />
-                                <a
-                                    href="tel:+918987313791"
-                                    className="text-blue-600 hover:underline"
-                                >
-                                    +91-8987313791
-                                </a>
-                            </div>
-                        </p>
-                    </div>
+                   
                 </CardContent>
             </Card>
         </div>

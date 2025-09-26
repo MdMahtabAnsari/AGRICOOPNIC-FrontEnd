@@ -26,7 +26,10 @@ import { getFees } from "@/lib/api/fees";
 import { useNavigate } from "react-router-dom";
 // import { PayuForm } from "@/components/payments/payu";
 // import { CustomPaymentForm } from "@/components/payments/custom-payment";
-import { BankPaymentForm } from "../payments/bank-payment";
+// import { BankPaymentForm } from "@/components/payments/bank-payment";
+
+import { ReviewPayUAlert } from "@/components/alert/review-payu-alert";
+import { LinkPaymentForm } from "@/components/payments/link-payment";
 
 // import type { RazorpayResponse } from "@/providers/payment-provider";
 export function ReviewPage() {
@@ -44,6 +47,9 @@ export function ReviewPage() {
     const [fees, setFees] = useState<number | null>(null);
 
     const navigate = useNavigate();
+
+    const [isOpen, setIsOpen] = useState(true);
+    const handleClose = () => setIsOpen(false);
 
     const fetchSuccessfulPayment = useCallback(async () => {
         setPaymentLoading(true);
@@ -188,14 +194,23 @@ export function ReviewPage() {
                     </Button>
                 )}
                 {!isPaymentSuccessful && basicInformation && fees && (
-                    <BankPaymentForm className="w-full h-fit"
+                    <LinkPaymentForm
                         params={{
+                            email: basicInformation.user.email,
+                            phone: basicInformation.user.phone,
                             category: basicInformation.category.categoryType,
-                            fees: fees
+                            fees: fees,
                         }}
+                        className="w-full"
                     />
                 )}
             </CardFooter>
+            <ReviewPayUAlert
+                email={basicInformation?.user.email || ""}
+                phone={basicInformation?.user.phone || ""}
+                isOpen={isOpen}
+                action={handleClose}
+            />
         </Card>
     );
 }
