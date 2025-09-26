@@ -30,9 +30,9 @@ export function LinkPaymentForm({
 
     const getPaymentLink = useCallback((category: CategoryTypeEnum) => {
         const paymentLink: Record<CategoryTypeEnum, string> = {
-            GENERAL: "https://v.payu.in/PAYUMN/sILs9vERJsFH",
-            EWS_OR_OBC: "https://v.payu.in/PAYUMN/rIvsJvqio6f5",
-            SC_OR_ST: "https://v.payu.in/PAYUMN/OI1sxvISUwvM",
+            GENERAL: "https://u.payu.in/PAYUMN/or2iRIdyrEil",
+            EWS_OR_OBC: "https://u.payu.in/PAYUMN/kJcB5HQWZM0v",
+            SC_OR_ST: "https://u.payu.in/PAYUMN/sJR7qn4r40Y8",
         };
         return paymentLink[category];
     }, []);
