@@ -62,6 +62,12 @@ export const HomePage = () => {
     <>
       {/* Application Extension Notice */}
 
+      <Alert>
+        <Info />
+        <AlertDescription className="text-sm md:text-base">
+          <strong>Important Update:</strong> The application closing date has been extended to 8th October. This extension has been provided due to website maintenance issues that prevented some applicants from completing the form. We encourage all applicants to fill and submit their forms at the earliest to avoid last-minute inconvenience.
+        </AlertDescription>
+      </Alert>
 
       {/* Hero Section */}
       <section className="bg-primary/5 py-16 mb-12">
@@ -79,12 +85,7 @@ export const HomePage = () => {
           </Button>
         </div>
       </section>
-      <Alert>
-        <Info />
-        <AlertDescription className="text-sm md:text-base">
-          <strong>Important Update:</strong> The application closing date has been extended to 8th October. This extension has been provided due to website maintenance issues that prevented some applicants from completing the form. We encourage all applicants to fill and submit their forms at the earliest to avoid last-minute inconvenience.
-        </AlertDescription>
-      </Alert>
+      
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
         <div className="mb-12 text-center">
@@ -103,16 +104,7 @@ export const HomePage = () => {
 export function HomePageSkeleton() {
   return (
     <>
-     
-
-      <section className="bg-primary/5 py-16 mb-12">
-        <div className="container mx-auto px-4 text-center">
-          <Skeleton className="h-10 w-64 mb-6 mx-auto" />
-          <Skeleton className="h-6 w-full max-w-xl mb-8 mx-auto" />
-          <Skeleton className="h-12 w-48 mx-auto" />
-        </div>
-      </section>
-       {/* Alert Skeleton */}
+     {/* Alert Skeleton */}
       <div className="mx-4 mt-4 mb-6 p-4 border rounded-lg">
         <div className="flex items-start space-x-3">
           <Skeleton className="h-4 w-4 mt-0.5" />
@@ -123,6 +115,15 @@ export function HomePageSkeleton() {
           </div>
         </div>
       </div>
+
+      <section className="bg-primary/5 py-16 mb-12">
+        <div className="container mx-auto px-4 text-center">
+          <Skeleton className="h-10 w-64 mb-6 mx-auto" />
+          <Skeleton className="h-6 w-full max-w-xl mb-8 mx-auto" />
+          <Skeleton className="h-12 w-48 mx-auto" />
+        </div>
+      </section>
+       
 
       <main className="container mx-auto px-4 py-12">
         <div className="mb-12 text-center">
